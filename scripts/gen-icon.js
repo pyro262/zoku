@@ -3,7 +3,8 @@ const pngToIco = require('png-to-ico');
 const fs = require('fs');
 const path = require('path');
 
-const SIZES = [256, 64, 32, 16];
+const ICO_SIZES = [256, 64, 32, 16];
+const PNG_SIZE  = 512;
 
 function pt(cx, cy, r, deg) {
   const rad = (deg * Math.PI) / 180;
@@ -124,16 +125,24 @@ async function generate() {
   fs.mkdirSync(outDir, { recursive: true });
 
   console.log('Generating final icon...');
-  const pngBuffers = await Promise.all(SIZES.map(async (size) => {
+
+  // icon.png — high-res for README / GitHub display
+  const pngBuf = await sharp(Buffer.from(buildSVG(PNG_SIZE)), { density: 300 })
+    .resize(PNG_SIZE, PNG_SIZE)
+    .png({ compressionLevel: 9 })
+    .toBuffer();
+  fs.writeFileSync(path.join(outDir, 'icon.png'), pngBuf);
+  console.log(`  icon.png ${PNG_SIZE}x${PNG_SIZE}`);
+
+  // ICO — 256/64/32/16 (NSIS rejects sizes > 256)
+  const pngBuffers = await Promise.all(ICO_SIZES.map(async (size) => {
     const png = await sharp(Buffer.from(buildSVG(size)), { density: 300 })
       .resize(size, size)
       .png({ compressionLevel: 9 })
       .toBuffer();
-    console.log(`  ${size}x${size}`);
+    console.log(`  ico ${size}x${size}`);
     return png;
   }));
-
-  fs.writeFileSync(path.join(outDir, 'icon.png'), pngBuffers[0]);
 
   const ico = await pngToIco(pngBuffers);
   fs.writeFileSync(path.join(outDir, 'icon.ico'), ico);
