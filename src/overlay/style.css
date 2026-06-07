@@ -1,0 +1,786 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+:root {
+  --plasma-purple:  #9b59b6;
+  --plasma-cyan:    #00d4ff;
+  --plasma-green:   #2ecc71;
+  --plasma-yellow:  #f39c12;
+  --plasma-red:     #e74c3c;
+  --plasma-blue:    #3498db;
+  --widget-opacity: 0.82;
+  --widget-scale:   1;
+  --bg:             rgba(10, 8, 18, var(--widget-opacity));
+  --bg-section:     rgba(255, 255, 255, 0.04);
+  --border:         rgba(155, 89, 182, 0.25);
+  --text-dim:       rgba(255, 255, 255, 0.45);
+  --font:           'Consolas', 'Courier New', monospace;
+}
+
+/* Hide all widgets until first telemetry packet */
+body.no-data .widget { display: none !important; }
+body.no-data #panel-bg { display: none !important; }
+
+html, body {
+  background: transparent;
+  overflow: hidden;
+  width: 100vw;
+  height: 100vh;
+}
+
+/* ── Widgets ──────────────────────────────── */
+
+.widget {
+  position: absolute;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font-family: var(--font);
+  color: #fff;
+  backdrop-filter: blur(4px);
+  overflow: hidden;
+  transform: scale(var(--widget-scale));
+  transform-origin: top left;
+}
+
+.widget.hidden {
+  display: none;
+}
+
+/* Drag handle — only shown when body is unlocked */
+.widget-drag {
+  display: none;
+  font-size: 9px;
+  color: rgba(243, 156, 18, 0.85);
+  letter-spacing: 0.1em;
+  padding: 4px 10px;
+  background: rgba(243, 156, 18, 0.14);
+  border-bottom: 1px solid rgba(243, 156, 18, 0.3);
+  cursor: grab;
+}
+
+body.unlocked .widget-drag {
+  display: block;
+}
+
+body.unlocked .widget-drag:active {
+  cursor: grabbing;
+}
+
+/* Subtle widget label inside some widgets */
+.widget-label {
+  font-size: 9px;
+  letter-spacing: 0.14em;
+  color: var(--text-dim);
+  padding: 6px 12px 3px;
+}
+
+/* ── Race bar ─────────────────────────────── */
+
+#w-race {
+  min-width: 300px;
+}
+
+#race-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 5px 12px;
+  font-size: 11px;
+  color: var(--text-dim);
+  letter-spacing: 0.08em;
+}
+
+#race-bar.in-race {
+  background: rgba(231, 76, 60, 0.12);
+}
+
+#race-pos {
+  font-size: 13px;
+  font-weight: bold;
+  color: var(--plasma-cyan);
+  min-width: 28px;
+}
+
+#race-label {
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  color: var(--text-dim);
+}
+
+#race-time {
+  font-size: 12px;
+  color: var(--plasma-purple);
+  text-align: right;
+  min-width: 72px;
+}
+
+/* ── Gear + Speed + RPM value ─────────────── */
+
+#w-stats {
+  min-width: 260px;
+}
+
+#main-row {
+  display: flex;
+  align-items: center;
+  padding: 10px 12px 6px;
+}
+
+#gear-box {
+  flex: 0 0 70px;
+  text-align: center;
+}
+
+#gear {
+  font-size: 56px;
+  line-height: 1;
+  font-weight: bold;
+  background: linear-gradient(160deg, var(--plasma-cyan), var(--plasma-purple));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+#speed-box {
+  flex: 1;
+  text-align: center;
+}
+
+#speed {
+  font-size: 48px;
+  line-height: 1;
+  font-weight: bold;
+  color: #fff;
+}
+
+#rpm-col {
+  flex: 0 0 72px;
+  text-align: right;
+}
+
+#rpm-val {
+  font-size: 18px;
+  font-weight: bold;
+  color: var(--plasma-yellow);
+}
+
+.label {
+  font-size: 9px;
+  letter-spacing: 0.15em;
+  color: var(--text-dim);
+  margin-top: 2px;
+}
+
+/* ── RPM bar ──────────────────────────────── */
+
+#w-rpm {
+  min-width: 260px;
+}
+
+#rpm-section {
+  padding: 6px 12px 8px;
+}
+
+#rpm-track {
+  position: relative;
+  height: 8px;
+  background: rgba(255,255,255,0.08);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+#rpm-fill {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, var(--plasma-blue), var(--plasma-cyan), var(--plasma-yellow), var(--plasma-red));
+  border-radius: 4px;
+  transition: width 0.05s linear;
+}
+
+#rpm-redline {
+  position: absolute;
+  right: 0;
+  top: 0;
+  height: 100%;
+  width: 12%;
+  background: rgba(231, 76, 60, 0.35);
+  border-left: 1px solid var(--plasma-red);
+}
+
+#rpm-labels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 9px;
+  color: var(--text-dim);
+  margin-top: 2px;
+}
+
+/* ── Inputs ───────────────────────────────── */
+
+#w-inputs {
+  min-width: 260px;
+}
+
+#inputs-row {
+  display: flex;
+  gap: 8px;
+  padding: 6px 12px 8px;
+}
+
+.input-group {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.input-label {
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  color: var(--text-dim);
+  min-width: 26px;
+}
+
+.input-track {
+  flex: 1;
+  height: 10px;
+  background: rgba(255,255,255,0.08);
+  border-radius: 5px;
+  overflow: hidden;
+}
+
+.input-fill {
+  height: 100%;
+  width: var(--fill-pct, 0%);
+  border-radius: 5px;
+  transition: width 0.05s linear;
+}
+
+.input-fill.thr { background: linear-gradient(90deg, var(--plasma-green), #27ae60); }
+.input-fill.brk { background: linear-gradient(90deg, var(--plasma-red),   #c0392b); }
+
+.input-pct {
+  font-size: 10px;
+  color: var(--text-dim);
+  min-width: 30px;
+  text-align: right;
+}
+
+/* ── Tire temps ──────────────────────────── */
+
+#w-tires {
+  min-width: 260px;
+}
+
+#tires {
+  padding: 0 12px 10px;
+  position: relative;
+}
+
+.tire-row {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+
+.tire-row:last-child {
+  margin-bottom: 0;
+}
+
+.tire-cell {
+  flex: 1;
+  background: var(--bg-section);
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  padding: 5px 8px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: relative;
+  z-index: 1;
+}
+
+.tire-pos {
+  font-size: 10px;
+  color: var(--text-dim);
+  letter-spacing: 0.08em;
+}
+
+.tire-temp {
+  font-size: 15px;
+  font-weight: bold;
+}
+
+/* ── Suspension ──────────────────────────── */
+
+#w-suspension {
+  min-width: 260px;
+}
+
+#suspension {
+  padding: 0 12px 10px;
+}
+
+.susp-row {
+  display: flex;
+  gap: 8px;
+}
+
+.susp-cell {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+}
+
+.susp-label {
+  font-size: 9px;
+  color: var(--text-dim);
+  letter-spacing: 0.08em;
+}
+
+.susp-track {
+  width: 100%;
+  height: 48px;
+  background: rgba(255,255,255,0.06);
+  border-radius: 4px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  overflow: hidden;
+  border: 1px solid var(--border);
+}
+
+.susp-fill {
+  width: 100%;
+  height: 0%;
+  background: linear-gradient(0deg, var(--plasma-purple), var(--plasma-cyan));
+  transition: height 0.05s linear, background 0.1s linear;
+  border-radius: 3px;
+}
+
+.susp-val {
+  font-size: 9px;
+  color: var(--text-dim);
+}
+
+.susp-max {
+  font-size: 8px;
+  color: rgba(255,255,255,0.25);
+  letter-spacing: 0.04em;
+}
+
+/* ── G-Force ─────────────────────────────── */
+
+#gmeter {
+  padding: 4px 12px 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.g-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.g-lbl {
+  font-size: 10px;
+  color: var(--text-dim);
+  letter-spacing: 0.1em;
+  min-width: 28px;
+}
+
+.g-track {
+  flex: 1;
+  height: 10px;
+  background: rgba(255,255,255,0.08);
+  border-radius: 5px;
+  position: relative;
+  overflow: hidden;
+}
+
+.g-center {
+  position: absolute;
+  left: 50%;
+  top: 0;
+  width: 1px;
+  height: 100%;
+  background: rgba(255,255,255,0.25);
+  transform: translateX(-50%);
+  pointer-events: none;
+}
+
+.g-fill {
+  position: absolute;
+  top: 0;
+  height: 100%;
+  border-radius: 5px;
+  transition: width 0.05s linear, left 0.05s linear, right 0.05s linear;
+}
+
+.g-val {
+  font-size: 10px;
+  color: var(--text-dim);
+  min-width: 42px;
+  text-align: right;
+}
+
+/* ── Lap Times ───────────────────────────── */
+
+#w-laptimes {
+  min-width: 220px;
+}
+
+#laptimes {
+  padding: 4px 12px 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.lt-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.lt-lbl {
+  font-size: 9px;
+  color: var(--text-dim);
+  letter-spacing: 0.12em;
+  min-width: 36px;
+}
+
+.lt-val {
+  font-size: 13px;
+  color: #fff;
+  font-weight: bold;
+  letter-spacing: 0.06em;
+}
+
+.lt-best { color: var(--plasma-green); }
+.lt-cur  { color: var(--plasma-cyan); }
+
+/* ── Engine Output ───────────────────────── */
+
+#w-boost {
+  min-width: 200px;
+}
+
+#engine-out {
+  padding: 4px 12px 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.eo-row {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+}
+
+.eo-lbl {
+  font-size: 9px;
+  color: var(--text-dim);
+  letter-spacing: 0.1em;
+  min-width: 48px;
+}
+
+.eo-val {
+  font-size: 16px;
+  font-weight: bold;
+  color: var(--plasma-yellow);
+  min-width: 60px;
+  text-align: right;
+}
+
+.eo-unit {
+  font-size: 9px;
+  color: var(--text-dim);
+  letter-spacing: 0.08em;
+}
+
+/* ── Steering ────────────────────────────── */
+
+#w-steering {
+  min-width: 200px;
+}
+
+#steer-section {
+  padding: 6px 12px 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  align-items: center;
+}
+
+.steer-bar {
+  width: 100% !important;
+  height: 12px !important;
+  flex: none !important;
+}
+
+.steer-fill {
+  background: var(--plasma-cyan) !important;
+}
+
+.steer-val {
+  font-size: 11px;
+  color: var(--text-dim);
+  letter-spacing: 0.08em;
+}
+
+/* ── Clutch / Handbrake ──────────────────── */
+
+#w-clutch {
+  min-width: 260px;
+}
+
+#clutch-row {
+  display: flex;
+  gap: 8px;
+  padding: 6px 12px 8px;
+}
+
+.input-fill.clt { background: linear-gradient(90deg, #3498db, #2980b9); }
+.input-fill.hbk { background: linear-gradient(90deg, #f39c12, #d68910); }
+
+/* ── Tire Slip ───────────────────────────── */
+
+#w-tireslip {
+  min-width: 260px;
+}
+
+#tireslip {
+  padding: 0 12px 10px;
+}
+
+/* ── Wheel Speeds ────────────────────────── */
+
+#w-wheelspeed {
+  min-width: 260px;
+}
+
+#wheelspeeds {
+  padding: 0 12px 10px;
+}
+
+/* ── Fuel ────────────────────────────────── */
+
+#w-fuel {
+  min-width: 200px;
+}
+
+#fuel-section {
+  padding: 6px 12px 8px;
+}
+
+.fuel-header {
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+  margin-bottom: 6px;
+}
+
+.fuel-num {
+  font-size: 22px;
+  font-weight: bold;
+  color: var(--plasma-green);
+}
+
+.fuel-unit {
+  font-size: 10px;
+  color: var(--text-dim);
+}
+
+.fuel-track {
+  height: 8px;
+  background: rgba(255,255,255,0.08);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.fuel-fill {
+  height: 100%;
+  border-radius: 4px;
+  transition: width 0.5s linear, background 0.5s linear;
+}
+
+/* ── Toast ───────────────────────────────── */
+
+#toast {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(46, 204, 113, 0.9);
+  color: #fff;
+  font-family: var(--font);
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  padding: 5px 16px;
+  border-radius: 4px;
+  transition: opacity 0.4s;
+  z-index: 999;
+}
+
+.hidden { display: none; opacity: 0; }
+
+/* ══════════════════════════════════════════
+   RACE THEME — car-diagram tire layout,
+   bigger readouts
+══════════════════════════════════════════ */
+
+body[data-theme="exterior"] .widget {
+  width: 300px;
+}
+
+body[data-theme="exterior"] #w-tires {
+  min-width: 300px;
+}
+
+body[data-theme="exterior"] #tires::before {
+  content: '';
+  position: absolute;
+  top: 4px;
+  bottom: 10px;
+  left: 50%;
+  width: 48px;
+  transform: translateX(-50%);
+  background: rgba(155, 89, 182, 0.06);
+  border: 1px solid rgba(155, 89, 182, 0.2);
+  border-radius: 14px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+body[data-theme="exterior"] .tire-row {
+  gap: 56px;
+  margin-bottom: 22px;
+}
+
+body[data-theme="exterior"] .tire-cell {
+  padding: 10px 12px;
+  min-width: 90px;
+}
+
+body[data-theme="exterior"] .tire-temp {
+  font-size: 22px;
+}
+
+body[data-theme="exterior"] .tire-pos {
+  font-size: 12px;
+}
+
+body[data-theme="exterior"] #gear {
+  font-size: 72px;
+}
+
+body[data-theme="exterior"] #speed {
+  font-size: 58px;
+}
+
+/* ══════════════════════════════════════════
+   HUD THEME — compact bottom strip for
+   in-car camera view
+══════════════════════════════════════════ */
+
+body[data-theme="interior"] .widget {
+  width: 300px;
+}
+
+body[data-theme="interior"] #race-bar {
+  padding: 3px 10px;
+  font-size: 10px;
+}
+
+body[data-theme="interior"] #race-pos {
+  font-size: 11px;
+}
+
+body[data-theme="interior"] #race-time {
+  font-size: 10px;
+}
+
+body[data-theme="interior"] #w-stats {
+  min-width: 300px;
+}
+
+body[data-theme="interior"] #main-row {
+  padding: 6px 10px 4px;
+}
+
+body[data-theme="interior"] #gear {
+  font-size: 52px;
+}
+
+body[data-theme="interior"] #speed {
+  font-size: 44px;
+}
+
+body[data-theme="interior"] #rpm-val {
+  font-size: 15px;
+}
+
+body[data-theme="interior"] #w-rpm {
+  min-width: 300px;
+}
+
+body[data-theme="interior"] #rpm-section {
+  padding: 4px 10px 6px;
+}
+
+body[data-theme="interior"] #rpm-track {
+  height: 10px;
+}
+
+body[data-theme="interior"] #w-inputs {
+  min-width: 140px;
+}
+
+body[data-theme="interior"] #inputs-row {
+  flex-direction: column;
+  gap: 5px;
+  padding: 6px 10px 8px;
+}
+
+/* ══════════════════════════════════════════
+   CONSOLIDATED THEME — single-panel look
+   Panel-bg provides the container; widgets
+   lose their individual backgrounds.
+══════════════════════════════════════════ */
+
+#panel-bg {
+  position: absolute;
+  display: none;
+  background: rgb(10, 8, 18);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  backdrop-filter: blur(4px);
+  opacity: var(--widget-opacity);
+  z-index: 0;
+  pointer-events: none;
+}
+
+body[data-theme="default"] .widget {
+  width: 300px;
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  backdrop-filter: none;
+  z-index: 1;
+}
+
+body[data-theme="default"] .widget.section-divider {
+  border-top: 1px solid rgba(155, 89, 182, 0.14);
+}
+

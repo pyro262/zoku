@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline'">
+  <title>Zoku</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="no-data">
+
+  <!-- Panel background for consolidated mode — sized by JS, sits behind widgets -->
+  <div id="panel-bg"></div>
+
+  <!-- Widget: Race Status Bar -->
+  <div class="widget" id="w-race">
+    <div class="widget-drag">⠿ RACE STATUS</div>
+    <div id="race-bar">
+      <span id="race-pos">--</span>
+      <span id="race-label">WAITING FOR RACE</span>
+      <span id="race-time">0:00.000</span>
+    </div>
+  </div>
+
+  <!-- Widget: Gear / Speed / RPM readout -->
+  <div class="widget" id="w-stats">
+    <div class="widget-drag">⠿ STATS</div>
+    <div id="main-row">
+      <div id="gear-box">
+        <div id="gear">--</div>
+        <div class="label">GEAR</div>
+      </div>
+      <div id="speed-box">
+        <div id="speed">0</div>
+        <div class="label">MPH</div>
+      </div>
+      <div id="rpm-col">
+        <div id="rpm-val">0</div>
+        <div class="label">RPM</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Widget: RPM Bar -->
+  <div class="widget" id="w-rpm">
+    <div class="widget-drag">⠿ RPM BAR</div>
+    <div id="rpm-section">
+      <div id="rpm-track">
+        <div id="rpm-fill"></div>
+        <div id="rpm-redline"></div>
+      </div>
+      <div id="rpm-labels">
+        <span>0</span>
+        <span id="rpm-max-label">--</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Widget: Throttle / Brake -->
+  <div class="widget" id="w-inputs">
+    <div class="widget-drag">⠿ INPUTS</div>
+    <div id="inputs-row">
+      <div class="input-group">
+        <div class="input-label">THR</div>
+        <div class="input-track">
+          <div id="thr-fill" class="input-fill thr"></div>
+        </div>
+        <div id="thr-val" class="input-pct">0%</div>
+      </div>
+      <div class="input-group">
+        <div class="input-label">BRK</div>
+        <div class="input-track">
+          <div id="brk-fill" class="input-fill brk"></div>
+        </div>
+        <div id="brk-val" class="input-pct">0%</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Widget: Tire Temps -->
+  <div class="widget" id="w-tires">
+    <div class="widget-drag">⠿ TIRE TEMPS</div>
+    <div class="widget-label">TIRE TEMPS °F</div>
+    <div id="tires">
+      <div class="tire-row">
+        <div class="tire-cell" id="tt-fl">
+          <div class="tire-pos">FL</div>
+          <div class="tire-temp">--</div>
+        </div>
+        <div class="tire-cell" id="tt-fr">
+          <div class="tire-pos">FR</div>
+          <div class="tire-temp">--</div>
+        </div>
+      </div>
+      <div class="tire-row">
+        <div class="tire-cell" id="tt-rl">
+          <div class="tire-pos">RL</div>
+          <div class="tire-temp">--</div>
+        </div>
+        <div class="tire-cell" id="tt-rr">
+          <div class="tire-pos">RR</div>
+          <div class="tire-temp">--</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Widget: Suspension -->
+  <div class="widget" id="w-suspension">
+    <div class="widget-drag">⠿ SUSPENSION</div>
+    <div class="widget-label">SUSPENSION</div>
+    <div id="suspension">
+      <div class="susp-row">
+        <div class="susp-cell">
+          <div class="susp-label">FL</div>
+          <div class="susp-track"><div id="su-fl" class="susp-fill"></div></div>
+          <div id="su-fl-val" class="susp-val">0%</div>
+          <div id="su-fl-max" class="susp-max">—</div>
+        </div>
+        <div class="susp-cell">
+          <div class="susp-label">FR</div>
+          <div class="susp-track"><div id="su-fr" class="susp-fill"></div></div>
+          <div id="su-fr-val" class="susp-val">0%</div>
+          <div id="su-fr-max" class="susp-max">—</div>
+        </div>
+        <div class="susp-cell">
+          <div class="susp-label">RL</div>
+          <div class="susp-track"><div id="su-rl" class="susp-fill"></div></div>
+          <div id="su-rl-val" class="susp-val">0%</div>
+          <div id="su-rl-max" class="susp-max">—</div>
+        </div>
+        <div class="susp-cell">
+          <div class="susp-label">RR</div>
+          <div class="susp-track"><div id="su-rr" class="susp-fill"></div></div>
+          <div id="su-rr-val" class="susp-val">0%</div>
+          <div id="su-rr-max" class="susp-max">—</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Widget: G-Force -->
+  <div class="widget" id="w-gmeter">
+    <div class="widget-drag">⠿ G-FORCE</div>
+    <div class="widget-label">G-FORCE</div>
+    <div id="gmeter">
+      <div class="g-row">
+        <span class="g-lbl">LAT</span>
+        <div class="g-track">
+          <div class="g-center"></div>
+          <div id="g-lat" class="g-fill"></div>
+        </div>
+        <span id="g-lat-val" class="g-val">0.0g</span>
+      </div>
+      <div class="g-row">
+        <span class="g-lbl">LONG</span>
+        <div class="g-track">
+          <div class="g-center"></div>
+          <div id="g-long" class="g-fill"></div>
+        </div>
+        <span id="g-long-val" class="g-val">0.0g</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Widget: Lap Times -->
+  <div class="widget" id="w-laptimes">
+    <div class="widget-drag">⠿ LAP TIMES</div>
+    <div id="laptimes">
+      <div class="lt-row"><span class="lt-lbl">BEST</span><span id="lt-best" class="lt-val lt-best">--:--.---</span></div>
+      <div class="lt-row"><span class="lt-lbl">LAST</span><span id="lt-last" class="lt-val">--:--.---</span></div>
+      <div class="lt-row"><span class="lt-lbl">CUR</span><span  id="lt-cur"  class="lt-val lt-cur">--:--.---</span></div>
+    </div>
+  </div>
+
+  <!-- Widget: Boost / Power / Torque -->
+  <div class="widget" id="w-boost">
+    <div class="widget-drag">⠿ ENGINE OUTPUT</div>
+    <div id="engine-out">
+      <div class="eo-row"><span class="eo-lbl">BOOST</span> <span id="eo-boost"  class="eo-val">0.0</span><span class="eo-unit">psi</span></div>
+      <div class="eo-row"><span class="eo-lbl">POWER</span> <span id="eo-power"  class="eo-val">0</span>  <span class="eo-unit">hp</span></div>
+      <div class="eo-row"><span class="eo-lbl">TORQUE</span><span id="eo-torque" class="eo-val">0</span>  <span class="eo-unit">lb-ft</span></div>
+    </div>
+  </div>
+
+  <!-- Widget: Steering -->
+  <div class="widget" id="w-steering">
+    <div class="widget-drag">⠿ STEERING</div>
+    <div id="steer-section">
+      <div class="g-track steer-bar">
+        <div class="g-center"></div>
+        <div id="steer-fill" class="g-fill steer-fill"></div>
+      </div>
+      <div id="steer-val" class="steer-val">0%</div>
+    </div>
+  </div>
+
+  <!-- Widget: Clutch / Handbrake -->
+  <div class="widget" id="w-clutch">
+    <div class="widget-drag">⠿ CLUTCH / HANDBRAKE</div>
+    <div id="clutch-row">
+      <div class="input-group">
+        <div class="input-label">CLT</div>
+        <div class="input-track"><div id="clt-fill" class="input-fill clt"></div></div>
+        <div id="clt-val" class="input-pct">0%</div>
+      </div>
+      <div class="input-group">
+        <div class="input-label">HBK</div>
+        <div class="input-track"><div id="hbk-fill" class="input-fill hbk"></div></div>
+        <div id="hbk-val" class="input-pct">0%</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Widget: Tire Slip Ratio -->
+  <div class="widget" id="w-tireslip">
+    <div class="widget-drag">⠿ TIRE SLIP</div>
+    <div class="widget-label">TIRE SLIP RATIO</div>
+    <div id="tireslip">
+      <div class="tire-row">
+        <div class="tire-cell" id="ts-fl"><div class="tire-pos">FL</div><div class="tire-temp" id="ts-fl-val">--</div></div>
+        <div class="tire-cell" id="ts-fr"><div class="tire-pos">FR</div><div class="tire-temp" id="ts-fr-val">--</div></div>
+      </div>
+      <div class="tire-row">
+        <div class="tire-cell" id="ts-rl"><div class="tire-pos">RL</div><div class="tire-temp" id="ts-rl-val">--</div></div>
+        <div class="tire-cell" id="ts-rr"><div class="tire-pos">RR</div><div class="tire-temp" id="ts-rr-val">--</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Widget: Wheel Speeds -->
+  <div class="widget" id="w-wheelspeed">
+    <div class="widget-drag">⠿ WHEEL SPEEDS</div>
+    <div class="widget-label">WHEEL SPEED rad/s</div>
+    <div id="wheelspeeds">
+      <div class="tire-row">
+        <div class="tire-cell" id="ws-fl"><div class="tire-pos">FL</div><div class="tire-temp" id="ws-fl-val">--</div></div>
+        <div class="tire-cell" id="ws-fr"><div class="tire-pos">FR</div><div class="tire-temp" id="ws-fr-val">--</div></div>
+      </div>
+      <div class="tire-row">
+        <div class="tire-cell" id="ws-rl"><div class="tire-pos">RL</div><div class="tire-temp" id="ws-rl-val">--</div></div>
+        <div class="tire-cell" id="ws-rr"><div class="tire-pos">RR</div><div class="tire-temp" id="ws-rr-val">--</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Widget: Fuel Level -->
+  <div class="widget" id="w-fuel">
+    <div class="widget-drag">⠿ FUEL</div>
+    <div id="fuel-section">
+      <div class="fuel-header">
+        <span id="fuel-val" class="fuel-num">--</span>
+        <span class="fuel-unit">%</span>
+      </div>
+      <div class="fuel-track"><div id="fuel-fill" class="fuel-fill"></div></div>
+    </div>
+  </div>
+
+  <!-- Session saved toast -->
+  <div id="toast" class="hidden">SESSION SAVED</div>
+
+  <script src="renderer.js"></script>
+</body>
+</html>

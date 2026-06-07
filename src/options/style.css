@@ -1,0 +1,211 @@
+* { margin: 0; padding: 0; box-sizing: border-box; user-select: none; }
+
+:root {
+  --bg:      #0a0812;
+  --bg-sec:  #0f0c1a;
+  --border:  rgba(155,89,182,0.22);
+  --purple:  #9b59b6;
+  --cyan:    #00d4ff;
+  --dim:     rgba(255,255,255,0.45);
+  --font:    'Consolas', 'Courier New', monospace;
+}
+
+html, body {
+  width: 100%;
+  height: 100%;
+  background: var(--bg);
+  color: #fff;
+  font-family: var(--font);
+  font-size: 12px;
+  display: flex;
+  flex-direction: column;
+}
+
+#titlebar {
+  height: 42px;
+  background: var(--bg-sec);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  padding: 0 18px;
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  color: var(--dim);
+  flex-shrink: 0;
+}
+
+#content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 6px 0;
+}
+
+.section {
+  padding: 14px 18px 10px;
+  border-bottom: 1px solid rgba(155,89,182,0.1);
+}
+
+.section:last-child { border-bottom: none; }
+
+.section-title {
+  font-size: 9px;
+  letter-spacing: 0.2em;
+  color: var(--dim);
+  margin-bottom: 12px;
+}
+
+/* ── Sliders ──────────────────────────── */
+
+.row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.row:last-child { margin-bottom: 0; }
+
+.row-label {
+  font-size: 11px;
+  color: rgba(255,255,255,0.75);
+  min-width: 60px;
+  flex-shrink: 0;
+}
+
+.slider {
+  flex: 1;
+  -webkit-appearance: none;
+  appearance: none;
+  height: 4px;
+  border-radius: 2px;
+  background: linear-gradient(
+    to right,
+    var(--purple) 0%,
+    var(--purple) var(--pct, 50%),
+    rgba(255,255,255,0.12) var(--pct, 50%)
+  );
+  outline: none;
+  cursor: pointer;
+}
+
+.slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--purple);
+  border: 2px solid #fff;
+  cursor: pointer;
+}
+
+.val {
+  font-size: 11px;
+  color: var(--cyan);
+  min-width: 42px;
+  text-align: right;
+  flex-shrink: 0;
+}
+
+/* ── Radio ────────────────────────────── */
+
+.radio-group {
+  display: flex;
+  gap: 20px;
+}
+
+.radio-opt {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  color: rgba(255,255,255,0.8);
+  cursor: pointer;
+}
+
+.radio-opt input[type="radio"] {
+  accent-color: var(--purple);
+  cursor: pointer;
+}
+
+/* ── Checkboxes ───────────────────────── */
+
+.checkbox-opt {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  font-size: 11px;
+  color: rgba(255,255,255,0.8);
+  cursor: pointer;
+  line-height: 1.5;
+}
+
+.checkbox-opt input[type="checkbox"] {
+  accent-color: var(--purple);
+  cursor: pointer;
+  margin-top: 2px;
+  flex-shrink: 0;
+}
+
+/* ── Sub-rows (auto-theme) ────────────── */
+
+.sub-rows {
+  margin-top: 10px;
+  padding-left: 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.sub-rows.hidden { display: none; }
+
+.sel {
+  background: rgba(255,255,255,0.06);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  color: #fff;
+  font-family: var(--font);
+  font-size: 11px;
+  padding: 3px 8px;
+  cursor: pointer;
+  flex: 1;
+}
+
+.sel option { background: #1a1428; }
+
+/* ── Footer ───────────────────────────── */
+
+#footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  padding: 12px 18px;
+  border-top: 1px solid var(--border);
+  background: var(--bg-sec);
+  flex-shrink: 0;
+}
+
+button {
+  background: rgba(255,255,255,0.06);
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  color: rgba(255,255,255,0.75);
+  font-family: var(--font);
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  padding: 6px 20px;
+  cursor: pointer;
+}
+
+button:hover { background: rgba(255,255,255,0.1); }
+
+button.primary {
+  background: rgba(155,89,182,0.25);
+  border-color: var(--purple);
+  color: #fff;
+}
+
+button.primary:hover { background: rgba(155,89,182,0.4); }
+
+#content::-webkit-scrollbar { width: 5px; }
+#content::-webkit-scrollbar-track { background: transparent; }
+#content::-webkit-scrollbar-thumb { background: rgba(155,89,182,0.3); border-radius: 3px; }

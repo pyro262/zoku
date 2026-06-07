@@ -1,0 +1,8 @@
+node_modules/
+dist/
+build/Thumbs.db
+build/gauge-*.png
+build/icon-*.png
+build/zoku-*.png
+CLAUDE.md
+.claude/

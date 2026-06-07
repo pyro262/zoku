@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline'">
+  <title>Zoku Options</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <div id="titlebar">ZOKU · OPTIONS</div>
+
+  <div id="content">
+
+    <div class="section">
+      <div class="section-title">OVERLAY</div>
+      <div class="row">
+        <label class="row-label">Opacity</label>
+        <input type="range" class="slider" id="opacity" min="0" max="100" step="1">
+        <span class="val" id="opacity-val">82%</span>
+      </div>
+      <div class="row">
+        <label class="row-label">Scale</label>
+        <input type="range" class="slider" id="scale" min="50" max="150" step="5">
+        <span class="val" id="scale-val">100%</span>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-title">DEFAULT THEME</div>
+      <div class="radio-group">
+        <label class="radio-opt"><input type="radio" name="theme" value="default"> Default</label>
+        <label class="radio-opt"><input type="radio" name="theme" value="exterior"> Exterior</label>
+        <label class="radio-opt"><input type="radio" name="theme" value="interior"> Interior</label>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-title">AUTO-SWITCH THEME</div>
+      <label class="checkbox-opt">
+        <input type="checkbox" id="auto-theme">
+        Switch theme on race start / end
+      </label>
+      <div id="auto-theme-opts" class="sub-rows">
+        <div class="row">
+          <label class="row-label">Free roam</label>
+          <select id="freeRoamTheme" class="sel">
+            <option value="default">Default</option>
+            <option value="exterior">Exterior</option>
+            <option value="interior">Interior</option>
+          </select>
+        </div>
+        <div class="row">
+          <label class="row-label">Race</label>
+          <select id="raceTheme" class="sel">
+            <option value="default">Default</option>
+            <option value="exterior">Exterior</option>
+            <option value="interior">Interior</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-title">STARTUP</div>
+      <label class="checkbox-opt">
+        <input type="checkbox" id="startWithWindows">
+        Start with Windows (Zoku sits in tray until FH6 sends data)
+      </label>
+    </div>
+
+  </div>
+
+  <div id="footer">
+    <button id="btn-cancel">Cancel</button>
+    <button id="btn-ok" class="primary">OK</button>
+  </div>
+
+  <script src="renderer.js"></script>
+</body>
+</html>

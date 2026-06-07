@@ -1,0 +1,49 @@
+{
+  "name": "zoku",
+  "version": "0.2.1",
+  "description": "Zoku — Forza Horizon 6 telemetry overlay with crew session sharing",
+  "main": "src/main.js",
+  "scripts": {
+    "start": "electron .",
+    "gen-icon": "node scripts/gen-icon.js",
+    "prebuild": "node scripts/gen-icon.js",
+    "build": "electron-builder --win --x64"
+  },
+  "build": {
+    "appId": "com.zoku.app",
+    "productName": "Zoku",
+    "directories": {
+      "output": "dist"
+    },
+    "files": [
+      "src/**/*",
+      "build/**/*"
+    ],
+    "extraFiles": [
+      { "from": "README.txt", "to": "README.txt" }
+    ],
+    "win": {
+      "target": "nsis",
+      "icon": "build/icon.ico"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowElevation": true,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "deleteAppDataOnUninstall": false,
+      "differentialPackage": false,
+      "include": "build/installer.nsh"
+    },
+    "extraFiles": [
+      { "from": "README.txt", "to": "README.txt" }
+    ]
+  },
+  "devDependencies": {
+    "electron": "^31.7.7",
+    "electron-builder": "^24.13.3",
+    "png-to-ico": "^2.1.8",
+    "sharp": "^0.33.5"
+  }
+}

@@ -1,0 +1,122 @@
+# Changelog
+
+All notable changes to Zoku are documented here.
+
+---
+
+## [0.2.1] — Current Release
+
+### Added
+- **Suspension history** — rolling 30-second max compression shown below current % per corner
+- Suspension bars now transition purple/cyan → solid red at 98–100% compression to signal bottoming out
+
+### Changed
+- Themes renamed for clarity: Consolidated → **Default**, Race → **Exterior**, HUD → **Interior**
+
+### Fixed
+- Session recorder now trims trailing zero-frames captured during the raceEnd debounce window — previously these dead packets inflated session duration and corrupted the GPS track tail
+- `panel-bg` at 0% opacity now correctly fades the border and backdrop-filter to zero (previously only the background color faded)
+- `panel-bg` bounding box calculation now accounts for widget scale — the background panel grows correctly when scale is increased
+- `stackConsolidated` is now called when first telemetry removes `body.no-data`, fixing a fresh-install layout issue where widgets were invisible during initial layout computation and stacked at 0,0
+
+---
+
+## [0.2.0]
+
+### Added
+- **8 new optional widgets** (hidden by default, enable via right-click tray → Widgets):
+  - G-Force (lateral and longitudinal G bars)
+  - Lap Times (best in green, last, current in M:SS.mmm)
+  - Boost / Power / Torque (live psi, hp, lb-ft)
+  - Steering (centred bar with direction and %)
+  - Clutch / Handbrake (input bars)
+  - Tire Slip Ratio (2×2 grip/slip grid, green → red)
+  - Wheel Speeds (2×2 in rad/s, red = spinning, blue = locking)
+  - Fuel Level (% bar, colour-coded by level)
+- **Auto-switch themes** — automatically swap layouts on race start/end; free-roam and race themes configurable independently
+- **Consolidated panel background** — single merged panel sized to cover all visible widgets in Default theme
+- **Consolidated drag** — dragging any widget handle in Default theme moves all visible widgets together; positions saved on release
+- RPM bar range now derived live from `engineMaxRpm` / `engineIdleRpm` packet fields (adapts to each car)
+- Session Viewer: removed menu bar — File → Exit no longer closes Zoku unexpectedly
+
+### Changed
+- Widget drag in non-consolidated themes remains per-widget (unchanged)
+- Options window dimensions locked at 420×530 (non-resizable)
+
+---
+
+## [0.1.9]
+
+### Added
+- **Focus watcher** — overlay auto-hides when FH6 loses focus, reappears when you switch back
+- Persistent PowerShell child process polls `GetForegroundWindow` + `GetWindowText` every 500ms
+- Checks both process name (`forzahorizon`) and window title (`forza horizon`) — supports Steam and Xbox/UWP installs
+- Zoku's own windows (Options, Session Viewer) are exempt from the hide trigger
+- 2-second hide debounce prevents flicker on brief focus changes
+- Unlock forces overlay visible immediately; re-lock defers to focus watcher (re-hides within 500ms if FH6 not focused)
+
+---
+
+## [0.1.8]
+
+### Added
+- **Options window** (420×530) — opacity slider 0–100%, scale slider 50–150%
+- Live preview — changes apply to the overlay immediately without saving
+- OK saves settings; Cancel reverts overlay to original config and closes
+- **Start with Windows** — Zoku launches at login, sits in tray silently until Forza sends data
+- Overlay opacity exposed as `--widget-opacity` CSS variable; scale as `--widget-scale` on `:root`
+
+---
+
+## [0.1.7]
+
+### Added
+- **Per-widget drag layout** — all 6 default widgets independently positionable
+- Widget positions persist to `%APPDATA%\Zoku\config.json` under `widgetLayouts[theme][widgetId]`
+- Positions survive theme switches — each theme maintains its own saved layout independently
+- Lock/Unlock toggle: amber drag handles appear on each widget when unlocked
+- Preset default positions applied on first launch or when theme key is absent from config
+
+---
+
+## [0.1.6]
+
+### Added
+- **Three themes**: Consolidated (all widgets top-left), Race (tire-focused, spread layout), HUD (minimal bottom strip)
+- Theme selection via right-click tray → Theme
+- Race theme: tires and stats spread across the screen; suited for exterior camera
+- HUD theme: minimal horizontal strip at the bottom; suited for cockpit/interior camera
+
+---
+
+## [0.1.5]
+
+### Added
+- **Session Viewer** window — play/pause, seek scrubber, variable playback speed (0.25×–4×)
+- GPS track map with left-click drag to pan, scroll wheel to zoom, double-click to reset fit
+- Viewer accessible from right-click tray
+
+---
+
+## [0.1.4]
+
+### Added
+- **Automatic race detection** — recording begins when `lapNumber > 0 && currentRaceTime > 0`
+- **Session recording** — downsamples to one frame per 50ms, saves JSON to `Documents\Zoku\sessions\`
+- 3-second `raceEnd` debounce prevents false stops between laps
+- Toast notification (`SESSION SAVED`) fades in after each session is written
+- Frame fields abbreviated for compact file size: `t`, `spd`, `rpm`, `gear`, `thr`, `brk`, `ttFL/FR/RL/RR`, `suFL/FR/RL/RR`, `lap`, `x/y/z`
+
+---
+
+## [0.1.3] — Initial Release
+
+### Added
+- Full-screen transparent always-on-top overlay window (primary display)
+- Live UDP listener on port 20777 — parses 324-byte FH6 Car Dash packets
+- Six default widgets: Race Status, Gear & Speed, RPM Bar, Throttle/Brake, Tire Temps, Suspension
+- Tire temp colour scale: blue (cold) → green (optimal) → yellow → red (hot)
+- `body.no-data` class hides all widgets until first telemetry packet arrives; re-applied after 3s of silence
+- System tray: Lock/Unlock, Quit
+- `Ctrl+Shift+F6` global shortcut to toggle overlay visibility
+- Race status bar: `WAITING FOR RACE` (no data) → `FREE ROAM · <class><PI>` → `<class><PI> · REC` (recording) → `FREE ROAM` (race ended)

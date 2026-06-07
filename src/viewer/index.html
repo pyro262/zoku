@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline'">
+  <title>Zoku — Session Viewer</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Toolbar -->
+  <div id="toolbar">
+    <button id="btn-load">+ Load Sessions</button>
+    <button id="btn-clear">Clear All</button>
+    <div class="toolbar-sep"></div>
+    <label class="toolbar-label">Colour by</label>
+    <select id="color-by">
+      <option value="spd">Speed</option>
+      <option value="thr">Throttle</option>
+      <option value="brk">Brake</option>
+    </select>
+    <div class="color-scale-bar"></div>
+    <div class="toolbar-push"></div>
+    <label class="toolbar-label">Overlay opacity</label>
+    <input type="range" id="opacity-slider" min="0" max="100" step="1" value="82" title="Overlay widget opacity">
+    <span id="opacity-val" class="toolbar-label">82%</span>
+    <div class="toolbar-sep"></div>
+    <span class="toolbar-title">ZOKU · SESSION VIEWER</span>
+  </div>
+
+  <!-- Main content -->
+  <div id="main">
+
+    <!-- Track map -->
+    <div id="map-panel">
+      <canvas id="map-canvas"></canvas>
+      <div id="map-hint">
+        <div class="hint-icon">⬡</div>
+        <div class="hint-text">Drop session JSON files here</div>
+        <div class="hint-sub">or click <strong>+ Load Sessions</strong> above</div>
+      </div>
+    </div>
+
+    <!-- Sidebar -->
+    <div id="sidebar">
+
+      <div class="sb-section">
+        <div class="sb-title">SESSIONS</div>
+        <div id="session-list"></div>
+      </div>
+
+      <div class="sb-section" id="telem-section">
+        <div class="sb-title">AT CURSOR</div>
+        <table id="telem-table">
+          <thead><tr id="telem-head"></tr></thead>
+          <tbody id="telem-body"></tbody>
+        </table>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Timeline -->
+  <div id="timeline">
+    <div id="transport">
+      <button id="btn-start"   title="Go to start">⏮</button>
+      <button id="btn-back"    title="Back 10s">⏪</button>
+      <button id="btn-play"    title="Play / Pause">▶</button>
+      <button id="btn-fwd"     title="Forward 10s">⏩</button>
+      <button id="btn-end"     title="Go to end">⏭</button>
+      <select id="play-speed"  title="Playback speed">
+        <option value="0.5">0.5×</option>
+        <option value="1" selected>1×</option>
+        <option value="2">2×</option>
+        <option value="5">5×</option>
+        <option value="10">10×</option>
+      </select>
+    </div>
+    <div id="scrubber-row">
+      <span id="tl-label" class="tl-time">0:00.000</span>
+      <input type="range" id="time-scrubber" min="0" max="300000" step="50" value="0">
+      <span id="tl-end" class="tl-time tl-end">--:--.---</span>
+    </div>
+  </div>
+
+  <script src="renderer.js"></script>
+</body>
+</html>
