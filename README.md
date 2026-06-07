@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="assets/icon.png" width="96" alt="Zoku">
+  <img src="assets/icon.png" width="200" alt="Zoku">
 </p>
 
 <h1 align="center">Zoku</h1>
