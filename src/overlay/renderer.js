@@ -254,6 +254,41 @@ function snapPosition(cx, cy, draggedEl, scale, targets) {
   return { x: bestX !== null ? bestX : cx, y: bestY !== null ? bestY : cy };
 }
 
+function clampWidget(el, x, y, scale) {
+  if (!confineWidgets) return { x, y };
+  const w = el.offsetWidth  * scale;
+  const h = el.offsetHeight * scale;
+  return {
+    x: Math.max(0, Math.min(displayW - w, x)),
+    y: Math.max(0, Math.min(displayH - h, y)),
+  };
+}
+
+function clampConsolidated(widgets, scale) {
+  if (!confineWidgets) return;
+  let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+  for (const w of widgets) {
+    const x = parseInt(w.el.style.left) || 0;
+    const y = parseInt(w.el.style.top)  || 0;
+    minX = Math.min(minX, x);
+    minY = Math.min(minY, y);
+    maxX = Math.max(maxX, x + w.el.offsetWidth  * scale);
+    maxY = Math.max(maxY, y + w.el.offsetHeight * scale);
+  }
+  let dx = 0, dy = 0;
+  if (minX < 0) dx = -minX;
+  else if (maxX > displayW) dx = displayW - maxX;
+  if (minY < 0) dy = -minY;
+  else if (maxY > displayH) dy = displayH - maxY;
+  if (dx === 0 && dy === 0) return;
+  for (const w of widgets) {
+    w.el.style.left = (parseInt(w.el.style.left) + dx) + 'px';
+    w.el.style.top  = (parseInt(w.el.style.top)  + dy) + 'px';
+  }
+  stackAnchor.x += dx;
+  stackAnchor.y += dy;
+}
+
 // ── Drag ────────────────────────────────────
 
 let dragState = null;
@@ -283,13 +318,14 @@ document.addEventListener('mousemove', (e) => {
 
 document.addEventListener('mouseup', () => {
   if (!dragState) return;
+  const scale = dragState.scale ?? (parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--widget-scale')) || 1);
   if (dragState.consolidated) {
+    clampConsolidated(dragState.widgets, scale);
     for (const w of dragState.widgets) {
       const x = parseInt(w.el.style.left) || 0;
       const y = parseInt(w.el.style.top)  || 0;
       window.fh6.saveWidgetPos(w.el.id, x, y);
     }
-    // Update anchor from topmost visible widget after drag
     const topWidget = dragState.widgets.reduce((a, b) =>
       (parseInt(a.el.style.top) || 0) < (parseInt(b.el.style.top) || 0) ? a : b
     );
@@ -299,8 +335,11 @@ document.addEventListener('mouseup', () => {
     };
     requestAnimationFrame(updatePanelBg);
   } else {
-    const x = parseInt(dragState.widget.style.left) || 0;
-    const y = parseInt(dragState.widget.style.top)  || 0;
+    const rawX = parseInt(dragState.widget.style.left) || 0;
+    const rawY = parseInt(dragState.widget.style.top)  || 0;
+    const { x, y } = clampWidget(dragState.widget, rawX, rawY, scale);
+    dragState.widget.style.left = x + 'px';
+    dragState.widget.style.top  = y + 'px';
     window.fh6.saveWidgetPos(dragState.widget.id, x, y);
     requestAnimationFrame(updatePanelBg);
   }
