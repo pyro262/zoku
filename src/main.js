@@ -377,6 +377,18 @@ function updateMenu() {
     },
     { type: 'separator' },
     {
+      label: `Confine widgets to screen: ${cfg.confineWidgets ? 'On' : 'Off'}`,
+      click: () => {
+        cfg.confineWidgets = !cfg.confineWidgets;
+        saveConfig();
+        if (overlayWin && !overlayWin.isDestroyed()) {
+          overlayWin.webContents.send('confine', cfg.confineWidgets);
+        }
+        updateMenu();
+      },
+    },
+    { type: 'separator' },
+    {
       label: 'Theme',
       submenu: themeSubmenu(theme, (name) => applyTheme(name)),
     },
