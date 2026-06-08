@@ -10,5 +10,7 @@ contextBridge.exposeInMainWorld('fh6', {
   onWidgetVisibility: (cb) => ipcRenderer.on('widgetVisibility',   (_, d) => cb(d)),
   onOpacity:          (cb) => ipcRenderer.on('opacity',            (_, v) => cb(v)),
   onScale:            (cb) => ipcRenderer.on('scale',              (_, v) => cb(v)),
+  onDisplaySize:      (cb) => ipcRenderer.on('displaySize',        (_, d) => cb(d)),
+  onConfine:          (cb) => ipcRenderer.on('confine',            (_, v) => cb(v)),
   saveWidgetPos:      (id, x, y) => ipcRenderer.send('saveWidgetPos', { id, x, y }),
 });
