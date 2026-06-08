@@ -225,14 +225,13 @@ function applyWidgetVisibility(id, visible) {
 
 const SNAP_DIST = 10;
 
-function snapPosition(cx, cy, draggedEl, scale) {
+function snapPosition(cx, cy, draggedEl, scale, targets) {
   const dw = draggedEl.offsetWidth * scale;
   const dh = draggedEl.offsetHeight * scale;
   let bestX = null, bestXDist = SNAP_DIST + 1;
   let bestY = null, bestYDist = SNAP_DIST + 1;
 
-  document.querySelectorAll('.widget:not(.hidden)').forEach((el) => {
-    if (el === draggedEl) return;
+  targets.forEach((el) => {
     const tx = parseInt(el.style.left) || 0;
     const ty = parseInt(el.style.top)  || 0;
     const tw = el.offsetWidth  * scale;
@@ -276,8 +275,7 @@ document.addEventListener('mousemove', (e) => {
       bg.style.top  = (dragState.bgOrigY + dy) + 'px';
     }
   } else {
-    const scale = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--widget-scale')) || 1;
-    const snapped = snapPosition(dragState.origX + dx, dragState.origY + dy, dragState.widget, scale);
+    const snapped = snapPosition(dragState.origX + dx, dragState.origY + dy, dragState.widget, dragState.scale, dragState.snapTargets);
     dragState.widget.style.left = snapped.x + 'px';
     dragState.widget.style.top  = snapped.y + 'px';
   }
@@ -330,6 +328,7 @@ document.querySelectorAll('.widget-drag').forEach((handle) => {
       };
     } else {
       const widget = handle.closest('.widget');
+      const scale = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--widget-scale')) || 1;
       dragState = {
         consolidated: false,
         widget,
@@ -337,6 +336,8 @@ document.querySelectorAll('.widget-drag').forEach((handle) => {
         startY: e.clientY,
         origX: parseInt(widget.style.left) || 0,
         origY: parseInt(widget.style.top)  || 0,
+        scale,
+        snapTargets: Array.from(document.querySelectorAll('.widget:not(.hidden)')).filter((el) => el !== widget),
       };
     }
     e.preventDefault();
