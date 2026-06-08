@@ -156,16 +156,21 @@ function startFocusWatcher() {
 
   focusWatcher = spawn('powershell', ['-NoProfile', '-NonInteractive', '-Command', script]);
 
-  // Watchdog: Add-Type C# compilation can stall during busy Windows startup.
-  // Process stays alive but emits no stdout → forzaFocused never fires.
-  // Kill + restart if no output within 8 s.
-  let startupWatchdog = setTimeout(() => {
-    if (focusWatcher) { focusWatcher.kill(); }
-  }, 8000);
+  // Rolling liveness watchdog: resets on every stdout chunk.
+  // Covers both Add-Type startup stall AND mid-loop hangs (e.g. Get-Process
+  // blocking on a process in transition during rapid alt+tab). 5 s = 10×
+  // the normal 500 ms poll interval — generous enough to survive transient
+  // slowness, tight enough to recover before the user notices.
+  let liveWatchdog = null;
+  const resetWatchdog = () => {
+    if (liveWatchdog) clearTimeout(liveWatchdog);
+    liveWatchdog = setTimeout(() => { if (focusWatcher) focusWatcher.kill(); }, 5000);
+  };
+  resetWatchdog();
 
   let buf = '';
   focusWatcher.stdout.on('data', (data) => {
-    if (startupWatchdog) { clearTimeout(startupWatchdog); startupWatchdog = null; }
+    resetWatchdog();
     buf += data.toString();
     const lines = buf.split('\n');
     buf = lines.pop();
@@ -192,6 +197,7 @@ function startFocusWatcher() {
   });
 
   focusWatcher.on('exit', () => {
+    if (liveWatchdog) { clearTimeout(liveWatchdog); liveWatchdog = null; }
     focusWatcher = null;
     if (!appQuitting) setTimeout(startFocusWatcher, 2000);
   });
