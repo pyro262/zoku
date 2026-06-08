@@ -223,6 +223,38 @@ function applyWidgetVisibility(id, visible) {
   }
 }
 
+const SNAP_DIST = 10;
+
+function snapPosition(cx, cy, draggedEl, scale) {
+  const dw = draggedEl.offsetWidth * scale;
+  const dh = draggedEl.offsetHeight * scale;
+  let bestX = null, bestXDist = SNAP_DIST + 1;
+  let bestY = null, bestYDist = SNAP_DIST + 1;
+
+  document.querySelectorAll('.widget:not(.hidden)').forEach((el) => {
+    if (el === draggedEl) return;
+    const tx = parseInt(el.style.left) || 0;
+    const ty = parseInt(el.style.top)  || 0;
+    const tw = el.offsetWidth  * scale;
+    const th = el.offsetHeight * scale;
+
+    for (const te of [tx, tx + tw]) {
+      for (const [de, offset] of [[cx, 0], [cx + dw, dw]]) {
+        const dist = Math.abs(de - te);
+        if (dist < bestXDist) { bestXDist = dist; bestX = te - offset; }
+      }
+    }
+    for (const te of [ty, ty + th]) {
+      for (const [de, offset] of [[cy, 0], [cy + dh, dh]]) {
+        const dist = Math.abs(de - te);
+        if (dist < bestYDist) { bestYDist = dist; bestY = te - offset; }
+      }
+    }
+  });
+
+  return { x: bestX !== null ? bestX : cx, y: bestY !== null ? bestY : cy };
+}
+
 // ── Drag ────────────────────────────────────
 
 let dragState = null;
@@ -244,8 +276,10 @@ document.addEventListener('mousemove', (e) => {
       bg.style.top  = (dragState.bgOrigY + dy) + 'px';
     }
   } else {
-    dragState.widget.style.left = (dragState.origX + dx) + 'px';
-    dragState.widget.style.top  = (dragState.origY + dy) + 'px';
+    const scale = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--widget-scale')) || 1;
+    const snapped = snapPosition(dragState.origX + dx, dragState.origY + dy, dragState.widget, scale);
+    dragState.widget.style.left = snapped.x + 'px';
+    dragState.widget.style.top  = snapped.y + 'px';
   }
 });
 
