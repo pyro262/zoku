@@ -4,4 +4,5 @@ contextBridge.exposeInMainWorld('viewer', {
   openFiles:      () => ipcRenderer.invoke('viewer:openFiles'),
   setOpacity:     (v) => ipcRenderer.send('viewer:setOpacity', v),
   getOpacity:     () => ipcRenderer.invoke('viewer:getOpacity'),
+  getVersion:     () => ipcRenderer.invoke('app:getVersion'),
 });

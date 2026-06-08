@@ -502,6 +502,12 @@ document.getElementById('time-scrubber').addEventListener('input', (e) => {
   setCurrentTime(+e.target.value / 1000);
 });
 
+// ── Version label ─────────────────────────────
+
+window.viewer.getVersion().then((v) => {
+  document.getElementById('version-label').textContent = `v${v}`;
+});
+
 // ── Opacity slider ────────────────────────────
 
 (async () => {

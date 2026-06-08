@@ -13,6 +13,10 @@ function setSlider(id, value, min, max, labelId, labelFmt) {
 
 // ── Load config ──────────────────────────
 
+window.options.getVersion().then((v) => {
+  document.getElementById('version-label').textContent = `v${v}`;
+});
+
 window.options.getConfig().then((cfg) => {
   original = { ...cfg };
 

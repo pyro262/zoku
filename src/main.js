@@ -92,18 +92,35 @@ let cfg = {};
 // Tracks what theme is currently displayed (may differ from cfg.theme during auto-switch)
 let activeTheme = null;
 
-let forzaFocused   = false;
+let forzaFocused   = true;   // optimistic; focus watcher corrects within 500 ms
 let userHidden     = false;
+let udpActive      = false;
+let udpTimeout     = null;
 let focusWatcher   = null;
 let focusHideTimer = null;
 let appQuitting    = false;
 let inRace         = false;
 
+const UDP_VISIBILITY_TIMEOUT = 5000;
+
 function syncOverlayVisibility() {
   if (!overlayWin || overlayWin.isDestroyed()) return;
-  const shouldShow = !userHidden && forzaFocused;
+  const shouldShow = !userHidden && udpActive && forzaFocused;
   if (shouldShow) overlayWin.show();
   else overlayWin.hide();
+}
+
+function onUdpData() {
+  if (udpTimeout) { clearTimeout(udpTimeout); }
+  udpTimeout = setTimeout(() => {
+    udpActive  = false;
+    udpTimeout = null;
+    syncOverlayVisibility();
+  }, UDP_VISIBILITY_TIMEOUT);
+  if (!udpActive) {
+    udpActive = true;
+    syncOverlayVisibility();
+  }
 }
 
 function startFocusWatcher() {
@@ -415,7 +432,7 @@ function updateMenu() {
       checked: cfg.startWithWindows ?? false,
       click: () => {
         cfg.startWithWindows = !cfg.startWithWindows;
-        app.setLoginItemSettings({ openAtLogin: cfg.startWithWindows });
+        app.setLoginItemSettings({ openAtLogin: cfg.startWithWindows, path: app.getPath('exe') });
         saveConfig();
         updateMenu();
       },
@@ -435,6 +452,7 @@ function updateMenu() {
       },
     },
     { type: 'separator' },
+    { label: `Zoku v${app.getVersion()}`, enabled: false },
     { label: 'Quit', click: () => app.quit() },
   ]);
 
@@ -459,6 +477,8 @@ function createOptions() {
   optionsWin.loadFile(path.join(__dirname, 'options', 'index.html'));
   optionsWin.on('closed', () => { optionsWin = null; });
 }
+
+ipcMain.handle('app:getVersion', () => app.getVersion());
 
 ipcMain.handle('options:getConfig', () => ({
   widgetOpacity:    cfg.widgetOpacity    ?? 0.82,
@@ -493,7 +513,7 @@ ipcMain.on('options:save', (_, patch) => {
     const target = inRace ? cfg.raceTheme : cfg.freeRoamTheme;
     if (target) sendTheme(target);
   }
-  app.setLoginItemSettings({ openAtLogin: cfg.startWithWindows ?? false });
+  app.setLoginItemSettings({ openAtLogin: cfg.startWithWindows ?? false, path: app.getPath('exe') });
   saveConfig();
   updateMenu();
   if (optionsWin && !optionsWin.isDestroyed()) optionsWin.close();
@@ -564,6 +584,7 @@ function createTray() {
 
 function wireTelemetry() {
   telemetry.on('telemetry', (data) => {
+    onUdpData();
     if (overlayWin && !overlayWin.isDestroyed()) {
       overlayWin.webContents.send('telemetry', data);
     }
@@ -609,7 +630,7 @@ app.whenReady().then(() => {
   telemetry.start(UDP_PORT);
 
   // Apply stored startup preference
-  app.setLoginItemSettings({ openAtLogin: cfg.startWithWindows ?? false });
+  app.setLoginItemSettings({ openAtLogin: cfg.startWithWindows ?? false, path: app.getPath('exe') });
 
   startFocusWatcher();
 
