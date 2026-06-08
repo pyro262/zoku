@@ -285,8 +285,6 @@ function clampConsolidated(widgets, scale) {
     w.el.style.left = (parseInt(w.el.style.left) + dx) + 'px';
     w.el.style.top  = (parseInt(w.el.style.top)  + dy) + 'px';
   }
-  stackAnchor.x += dx;
-  stackAnchor.y += dy;
 }
 
 // ── Drag ────────────────────────────────────
