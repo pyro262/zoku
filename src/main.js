@@ -296,6 +296,7 @@ function createOverlay() {
   cfg.widgetOpacity    ??= 0.82;
   cfg.overlayScale     ??= 1;
   cfg.startWithWindows ??= false;
+  cfg.confineWidgets   ??= true;
 
   activeTheme = cfg.theme;
 
@@ -327,9 +328,12 @@ function createOverlay() {
   overlayWin.on('closed', () => { overlayWin = null; });
 
   overlayWin.webContents.on('dom-ready', () => {
+    const { W, H } = getDisplaySize();
     sendTheme();
-    overlayWin.webContents.send('opacity', cfg.widgetOpacity);
-    overlayWin.webContents.send('scale',   cfg.overlayScale);
+    overlayWin.webContents.send('opacity',      cfg.widgetOpacity);
+    overlayWin.webContents.send('scale',        cfg.overlayScale);
+    overlayWin.webContents.send('displaySize',  { W, H });
+    overlayWin.webContents.send('confine',      cfg.confineWidgets ?? true);
   });
 }
 
@@ -633,6 +637,13 @@ app.whenReady().then(() => {
   app.setLoginItemSettings({ openAtLogin: cfg.startWithWindows ?? false, path: app.getPath('exe') });
 
   startFocusWatcher();
+
+  screen.on('display-metrics-changed', () => {
+    if (!overlayWin || overlayWin.isDestroyed()) return;
+    const { W, H, X, Y } = getDisplaySize();
+    overlayWin.setBounds({ x: X, y: Y, width: W, height: H });
+    overlayWin.webContents.send('displaySize', { W, H });
+  });
 
   globalShortcut.register('CommandOrControl+Shift+F6', () => {
     userHidden = !userHidden;
