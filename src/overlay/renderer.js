@@ -47,6 +47,9 @@ let idleRpm = 800;
 let inRace = false;
 let hasData = false;
 let noDataTimer = null;
+let displayW = window.innerWidth;
+let displayH = window.innerHeight;
+let confineWidgets = true;
 
 // Consolidated panel anchor — top-left of the whole panel, preserved across drags
 let stackAnchor = { x: 20, y: 20 };
@@ -313,6 +316,8 @@ window.fh6.onWidgetVisibility((d)   => applyWidgetVisibility(d.id, d.visible));
 window.fh6.onLockState((locked)     => document.body.classList.toggle('unlocked', !locked));
 window.fh6.onOpacity((v) => document.documentElement.style.setProperty('--widget-opacity', v));
 window.fh6.onScale((v)   => document.documentElement.style.setProperty('--widget-scale',   v));
+window.fh6.onDisplaySize((d) => { displayW = d.W; displayH = d.H; });
+window.fh6.onConfine((v)     => { confineWidgets = v; });
 
 window.fh6.onSessionSaved(() => {
   const toast = $('toast');
