@@ -139,8 +139,16 @@ function startFocusWatcher() {
 
   focusWatcher = spawn('powershell', ['-NoProfile', '-NonInteractive', '-Command', script]);
 
+  // Watchdog: Add-Type C# compilation can stall during busy Windows startup.
+  // Process stays alive but emits no stdout → forzaFocused never fires.
+  // Kill + restart if no output within 8 s.
+  let startupWatchdog = setTimeout(() => {
+    if (focusWatcher) { focusWatcher.kill(); }
+  }, 8000);
+
   let buf = '';
   focusWatcher.stdout.on('data', (data) => {
+    if (startupWatchdog) { clearTimeout(startupWatchdog); startupWatchdog = null; }
     buf += data.toString();
     const lines = buf.split('\n');
     buf = lines.pop();
