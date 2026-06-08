@@ -309,8 +309,9 @@ document.addEventListener('mousemove', (e) => {
     }
   } else {
     const snapped = snapPosition(dragState.origX + dx, dragState.origY + dy, dragState.widget, dragState.scale, dragState.snapTargets);
-    dragState.widget.style.left = snapped.x + 'px';
-    dragState.widget.style.top  = snapped.y + 'px';
+    const clamped = clampWidget(dragState.widget, snapped.x, snapped.y, dragState.scale);
+    dragState.widget.style.left = clamped.x + 'px';
+    dragState.widget.style.top  = clamped.y + 'px';
   }
 });
 
