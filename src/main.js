@@ -210,8 +210,8 @@ function saveConfig() {
 }
 
 function getDisplaySize() {
-  const { width, height } = screen.getPrimaryDisplay().size;
-  return { W: width, H: height };
+  const b = screen.getPrimaryDisplay().bounds;
+  return { W: b.width, H: b.height, X: b.x, Y: b.y };
 }
 
 function buildThemePayload(name) {
@@ -299,11 +299,11 @@ function createOverlay() {
 
   activeTheme = cfg.theme;
 
-  const { W, H } = getDisplaySize();
+  const { W, H, X, Y } = getDisplaySize();
 
   overlayWin = new BrowserWindow({
-    x: 0,
-    y: 0,
+    x: X,
+    y: Y,
     width: W,
     height: H,
     transparent: true,
