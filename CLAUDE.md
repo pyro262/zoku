@@ -23,7 +23,7 @@ npm run build        # gen-icon runs automatically via prebuild, then packages N
 
 - **Repo:** https://github.com/pyro262/zoku (public)
 - **Git identity:** `user.name = pyro262`, `user.email = 50073134+pyro262@users.noreply.github.com` — always use this to avoid random contributor attribution
-- **Releases:** v0.1.3–v0.2.1 all published with installer binaries; use `gh release create` + `gh release edit --draft=false` for new releases
+- **Releases:** v0.1.3–v0.2.4 all published with installer binaries; use `gh release create` + `gh release edit --draft=false` for new releases; always update `README.md` version badge (`shields.io` static badge, not auto-updated)
 - **Wiki:** not yet initialized — user must click "Create the first page" at github.com/pyro262/zoku/wiki once, then wiki pages can be pushed via git to https://github.com/pyro262/zoku.wiki.git
 
 ## FH6 setup required to receive data
@@ -44,7 +44,7 @@ Game must be in **borderless windowed** mode — overlays cannot penetrate exclu
 
 **Session recorder** (`src/session.js`): singleton, started/stopped by `raceStart`/`raceEnd`. Downsamples to one frame per 50ms. Writes to `Documents/Zoku/sessions/session_<timestamp>.json`. Frame fields abbreviated (`t`, `x/y/z`, `spd`, `rpm`, `gear`, `thr`, `brk`, `ttFL/FR/RL/RR`, `suFL/FR/RL/RR`, `lap`).
 
-**IPC bridge** (`src/preload.js`): `contextBridge` exposes `window.fh6.onTelemetry`, `onRaceStart`, `onRaceEnd`, `onSessionSaved`, `onLockState`, `onTheme`, `onWidgetVisibility`, `onOpacity`, `onScale`, `saveWidgetPos` to renderer. No `nodeIntegration`.
+**IPC bridge** (`src/preload.js`): `contextBridge` exposes `window.fh6.onTelemetry`, `onRaceStart`, `onRaceEnd`, `onSessionSaved`, `onLockState`, `onTheme`, `onWidgetVisibility`, `onOpacity`, `onScale`, `onDisplaySize`, `onConfine`, `saveWidgetPos` to renderer. No `nodeIntegration`.
 
 **Viewer preload** (`src/viewer-preload.js`): exposes `window.viewer.openFiles`, `setOpacity(v)`, `getOpacity()`.
 
