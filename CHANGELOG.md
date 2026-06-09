@@ -4,7 +4,53 @@ All notable changes to Zoku are documented here.
 
 ---
 
-## [0.2.1] — Current Release
+## [0.2.6] — Current Release
+
+### Added
+- **`Ctrl+Shift+F7` theme cycle hotkey** — cycles `default → exterior → interior → default`. When auto-switch is on, the switch is temporary and auto-switch resumes on the next race state change. When auto-switch is off, the switch is persistent.
+
+---
+
+## [0.2.5]
+
+### Fixed
+- **Rolling liveness watchdog** — replaced the one-shot startup watchdog with a rolling watchdog that resets on every PowerShell stdout chunk and kills+restarts after 5 s of silence. Fixes a hang where `Get-Process` could block mid-loop during rapid alt+tab, leaving `forzaFocused` stuck `false` permanently so the overlay would never auto-show again.
+
+---
+
+## [0.2.4]
+
+### Added
+- **Widget edge snapping** — drag widgets in Exterior/Interior themes; edges snap together at a 10 px threshold; X and Y axes snap independently. Snap targets and scale are read once at mousedown for performance.
+- **Confinement toggle** — tray menu "Confine widgets to screen: On/Off" (default On). Prevents widgets from being dragged off-screen; clamps on mouseup.
+
+### Fixed
+- **DPI / multi-monitor sizing** — overlay now correctly fills the primary monitor under Windows DPI scaling; window origin uses `display.bounds` (fixes setups where the primary monitor is not the leftmost)
+- Overlay auto-resizes if display resolution changes while the app is running
+
+---
+
+## [0.2.3]
+
+### Added
+- **Version number** displayed in the Options window footer, Session Viewer toolbar, and tray right-click menu
+
+### Changed
+- **Overlay show/hide rework** — overlay now appears as soon as FH6 starts sending UDP data (no waiting on the focus watcher); hides after 5 s of no packets. Focus watcher still drives the hide-on-alt-tab path.
+
+### Fixed
+- **Start with Windows** — `setLoginItemSettings` now passes the explicit exe path required for NSIS installs; the registry entry was silently failing without it
+
+---
+
+## [0.2.2]
+
+### Fixed
+- Focus watcher stall on Windows auto-launch at startup
+
+---
+
+## [0.2.1]
 
 ### Added
 - **Suspension history** — rolling 30-second max compression shown below current % per corner

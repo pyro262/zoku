@@ -47,6 +47,9 @@ It also **auto-records every race session** as a JSON file so you can replay the
 - **Session Viewer** — replay any session with a GPS map, scrubber, and variable playback speed
 - **Three themes** — Default (consolidated panel), Exterior (track-focused), Interior (HUD strip)
 - **Auto-switch themes** — automatically swap layouts when a race starts and ends
+- **Theme cycle hotkey** — `Ctrl+Shift+F7` cycles themes instantly
+- **Widget edge snapping** — drag widgets in Exterior/Interior themes and edges snap together at 10 px
+- **Confinement** — widgets clamp to screen bounds on release (toggleable)
 - **Focus-aware** — overlay hides when FH6 loses focus, reappears when you switch back
 - **Opacity & scale** — fine-tune transparency and widget size from the Options window
 - **Start with Windows** — sits in the tray silently until Forza sends data
@@ -83,10 +86,12 @@ Start the game. Zoku begins receiving data automatically — no further action n
 | Action | How |
 |--------|-----|
 | Toggle overlay | `Ctrl+Shift+F6` |
+| Cycle theme | `Ctrl+Shift+F7` |
 | Lock / unlock widgets | Right-click tray → **Lock / Unlock** |
 | Change theme | Right-click tray → **Theme** |
 | Toggle widgets | Right-click tray → **Widgets** |
 | Opacity & scale | Right-click tray → **Settings** |
+| Confine widgets to screen | Right-click tray → **Confine widgets to screen** |
 | View sessions | Right-click tray → **Open sessions folder** |
 
 ## Widgets
@@ -121,6 +126,8 @@ Six widgets are on by default. Eight more are available via **right-click tray �
 Widget positions are saved **per theme** — switching themes always restores wherever you last left each widget for that layout.
 
 **Auto-switch** (right-click tray → Settings) swaps themes automatically when races start and end. Configurable independently for free roam and race.
+
+`Ctrl+Shift+F7` cycles themes manually. When auto-switch is on, the hotkey is a temporary override — auto-switch resumes on the next race state change.
 
 ## Session Recording
 

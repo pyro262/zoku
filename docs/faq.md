@@ -102,6 +102,30 @@ When enabled, Zoku automatically swaps themes when a race starts and when it end
 
 ---
 
+**Q: Can I quickly switch themes without opening the tray menu?**
+
+Yes — `Ctrl+Shift+F7` cycles through the three themes in order: Default → Exterior → Interior → Default.
+
+If Auto-switch is on, the hotkey applies a temporary override. Auto-switch resumes automatically on the next race start or race end. If Auto-switch is off, the switch is permanent.
+
+---
+
+**Q: My widgets keep snapping to each other — how do I turn that off?**
+
+Widget edge snapping (10 px threshold) is built into the drag system for Exterior and Interior themes. It cannot be disabled, but snapping only activates near another widget's edge — move a widget away from other widgets and it positions freely.
+
+Default theme is not affected by snapping (the whole panel moves as a unit).
+
+---
+
+**Q: A widget got dragged off-screen. How do I get it back?**
+
+If **Confine widgets to screen** is enabled in the tray menu (default: On), widgets are automatically clamped to screen bounds when you release them — they cannot leave the screen.
+
+If you disabled confinement and a widget is off-screen, either re-enable confinement and drag it back, or reset the layout via `config.json` (see "How do I reset a widget layout back to defaults?").
+
+---
+
 ## Session Recording
 
 **Q: What gets recorded and when?**
