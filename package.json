@@ -20,7 +20,10 @@
       "build/**/*"
     ],
     "extraFiles": [
-      { "from": "README.txt", "to": "README.txt" }
+      {
+        "from": "README.txt",
+        "to": "README.txt"
+      }
     ],
     "win": {
       "target": "nsis",
@@ -35,14 +38,12 @@
       "deleteAppDataOnUninstall": false,
       "differentialPackage": false,
       "include": "build/installer.nsh"
-    },
-    "extraFiles": [
-      { "from": "README.txt", "to": "README.txt" }
-    ]
+    }
   },
   "devDependencies": {
     "electron": "^31.7.7",
     "electron-builder": "^24.13.3",
+    "playwright-core": "^1.60.0",
     "png-to-ico": "^2.1.8",
     "sharp": "^0.33.5"
   }

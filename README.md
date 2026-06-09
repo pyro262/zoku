@@ -18,6 +18,27 @@ Zoku is a lightweight, always-on-top overlay that reads Forza Horizon 6's live U
 
 It also **auto-records every race session** as a JSON file so you can replay the GPS track, compare laps, and review inputs after the fact.
 
+---
+
+<table>
+  <tr>
+    <td align="center" width="33%">
+      <img src="docs/screenshots/theme-default-crop.png" width="240" alt="Default theme"><br>
+      <sub><b>Default</b> — consolidated panel</sub>
+    </td>
+    <td align="center" width="33%">
+      <img src="docs/screenshots/theme-exterior-crop.png" width="380" alt="Exterior theme"><br>
+      <sub><b>Exterior</b> — track / chase cam</sub>
+    </td>
+    <td align="center" width="33%">
+      <img src="docs/screenshots/theme-interior-crop.png" width="380" alt="Interior theme"><br>
+      <sub><b>Interior</b> — cockpit HUD strip</sub>
+    </td>
+  </tr>
+</table>
+
+---
+
 ## Features
 
 - **14 modular widgets** — enable only what you want, position them anywhere
@@ -106,7 +127,7 @@ Widget positions are saved **per theme** — switching themes always restores wh
 Zoku records automatically on race entry and stops when the race ends. Files land in:
 
 ```
-Documents\Zoku\sessions\session_<timestamp>.json
+Documents\Zoku\sessions\session_2026-06-08_14-32-00.json
 ```
 
 Each frame (50ms) captures: speed, RPM, gear, throttle, brake, tire temps, suspension travel, GPS position (X/Y/Z), and lap number.

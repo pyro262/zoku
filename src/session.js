@@ -87,7 +87,8 @@ class SessionRecorder {
     const dir = path.join(app.getPath('documents'), 'Zoku', 'sessions');
     fs.mkdirSync(dir, { recursive: true });
 
-    const filename = `session_${Date.now()}.json`;
+    const ts = new Date().toISOString().replace(/[:.]/g, '-').replace('T', '_').slice(0, 19);
+    const filename = `session_${ts}.json`;
     const filepath = path.join(dir, filename);
     fs.writeFileSync(filepath, JSON.stringify(session));
     console.log('Session saved:', filepath);
