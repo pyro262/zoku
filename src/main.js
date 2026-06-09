@@ -668,6 +668,17 @@ app.whenReady().then(() => {
     userHidden = !userHidden;
     syncOverlayVisibility();
   });
+
+  globalShortcut.register('CommandOrControl+Shift+F7', () => {
+    const idx  = THEME_NAMES.indexOf(activeTheme ?? cfg.theme);
+    const next = THEME_NAMES[(idx + 1) % THEME_NAMES.length];
+    if (cfg.autoTheme) {
+      sendTheme(next);
+      autoSwitchOverride = true;
+    } else {
+      applyTheme(next);
+    }
+  });
 });
 
 app.on('window-all-closed', () => {
