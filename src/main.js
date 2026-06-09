@@ -100,6 +100,7 @@ let focusWatcher   = null;
 let focusHideTimer = null;
 let appQuitting    = false;
 let inRace         = false;
+let autoSwitchOverride = false;
 
 const UDP_VISIBILITY_TIMEOUT = 5000;
 
