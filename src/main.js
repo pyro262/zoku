@@ -616,6 +616,7 @@ function wireTelemetry() {
 
   telemetry.on('raceStart', (data) => {
     inRace = true;
+    autoSwitchOverride = false;
     session.start(data);
     if (overlayWin && !overlayWin.isDestroyed()) {
       overlayWin.webContents.send('raceStart', data);
@@ -625,6 +626,7 @@ function wireTelemetry() {
 
   telemetry.on('raceEnd', (data) => {
     inRace = false;
+    autoSwitchOverride = false;
     const savedPath = session.stop();
     if (overlayWin && !overlayWin.isDestroyed()) {
       overlayWin.webContents.send('raceEnd', data);
