@@ -100,7 +100,6 @@ let focusWatcher   = null;
 let focusHideTimer = null;
 let appQuitting    = false;
 let inRace         = false;
-let autoSwitchOverride = false;
 
 const UDP_VISIBILITY_TIMEOUT = 5000;
 
@@ -616,7 +615,6 @@ function wireTelemetry() {
 
   telemetry.on('raceStart', (data) => {
     inRace = true;
-    autoSwitchOverride = false;
     session.start(data);
     if (overlayWin && !overlayWin.isDestroyed()) {
       overlayWin.webContents.send('raceStart', data);
@@ -626,7 +624,6 @@ function wireTelemetry() {
 
   telemetry.on('raceEnd', (data) => {
     inRace = false;
-    autoSwitchOverride = false;
     const savedPath = session.stop();
     if (overlayWin && !overlayWin.isDestroyed()) {
       overlayWin.webContents.send('raceEnd', data);
@@ -676,7 +673,6 @@ app.whenReady().then(() => {
     const next = THEME_NAMES[(idx + 1) % THEME_NAMES.length];
     if (cfg.autoTheme) {
       sendTheme(next);
-      autoSwitchOverride = true;
     } else {
       applyTheme(next);
     }
