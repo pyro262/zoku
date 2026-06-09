@@ -77,9 +77,9 @@ FH6 sends 324-byte little-endian UDP packets. Key offsets:
 
 Plasma dark theme — `#0a0812` background, `#9b59b6` purple, `#00d4ff` cyan, `#2ecc71` green, `#f39c12` yellow, `#e74c3c` red. All panels `transparent: true`. CSS custom properties in `src/overlay/style.css`. Icon uses warm sub-palette (gold→orange→red→purple arc segments).
 
-## Current state (v0.2.4)
+## Current state (v0.2.6)
 
-- Installer: `dist/Zoku Setup 0.2.5.exe` at `/media/projects/zoku/dist/`
+- Installer: `dist/Zoku Setup 0.2.6.exe` at `/media/projects/zoku/dist/`
 - Overlay auto-hides when no UDP data (3 s debounce); starts hidden (`show: false`), shown only when Forza window is focused
 - Focus watcher: persistent PowerShell child process polls `GetForegroundWindow` + `GetWindowText` every 500 ms with `Console.Out.Flush()` — checks both process name (`forzahorizon`) and window title (`forza horizon`) to handle both Steam and Xbox/UWP installs; Zoku's own windows exempt from hide debounce; 2 s debounce on hide; rolling liveness watchdog kills+restarts PS after 5 s silence (handles mid-loop hangs from rapid alt+tab)
 - Widget positions persist across theme switches; no auto-reset on `applyTheme` or `options:save` — to reset, delete theme key from config.json
