@@ -325,14 +325,16 @@ document.addEventListener('mouseup', () => {
       const y = parseInt(w.el.style.top)  || 0;
       window.fh6.saveWidgetPos(w.el.id, x, y);
     }
-    const topWidget = dragState.widgets.reduce((a, b) =>
-      (parseInt(a.el.style.top) || 0) < (parseInt(b.el.style.top) || 0) ? a : b
-    );
-    stackAnchor = {
-      x: parseInt(topWidget.el.style.left) || stackAnchor.x,
-      y: parseInt(topWidget.el.style.top)  || stackAnchor.y,
-    };
-    requestAnimationFrame(updatePanelBg);
+    if (dragState.isDefault) {
+      const topWidget = dragState.widgets.reduce((a, b) =>
+        (parseInt(a.el.style.top) || 0) < (parseInt(b.el.style.top) || 0) ? a : b
+      );
+      stackAnchor = {
+        x: parseInt(topWidget.el.style.left) || stackAnchor.x,
+        y: parseInt(topWidget.el.style.top)  || stackAnchor.y,
+      };
+      requestAnimationFrame(updatePanelBg);
+    }
   } else {
     const rawX = parseInt(dragState.widget.style.left) || 0;
     const rawY = parseInt(dragState.widget.style.top)  || 0;
@@ -349,11 +351,13 @@ document.querySelectorAll('.widget-drag').forEach((handle) => {
   handle.addEventListener('mousedown', (e) => {
     if (!document.body.classList.contains('unlocked')) return;
     const isConsolidated = document.body.dataset.theme === 'default';
+    const groupDrag = isConsolidated || e.shiftKey;
 
-    if (isConsolidated) {
+    if (groupDrag) {
       const bg = $('panel-bg');
       dragState = {
         consolidated: true,
+        isDefault: isConsolidated,
         widgets: Array.from(document.querySelectorAll('.widget:not(.hidden)')).map((w) => ({
           el: w,
           origX: parseInt(w.style.left) || 0,
@@ -369,6 +373,7 @@ document.querySelectorAll('.widget-drag').forEach((handle) => {
       const scale = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--widget-scale')) || 1;
       dragState = {
         consolidated: false,
+        isDefault: false,
         widget,
         startX: e.clientX,
         startY: e.clientY,
