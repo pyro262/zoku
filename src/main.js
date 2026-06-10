@@ -100,7 +100,7 @@ let focusWatcher   = null;
 let focusHideTimer = null;
 let appQuitting    = false;
 let inRace         = false;
-let forzaDisplay   = null;
+let forzaDisplay   = null; // last known display FH6 was on; not cleared on focus loss
 
 const UDP_VISIBILITY_TIMEOUT = 5000;
 
@@ -126,7 +126,7 @@ function onUdpData() {
 
 function startFocusWatcher() {
   if (focusWatcher) return;
-  // Output format: "ProcessName|Window Title" once per 500 ms, explicitly flushed.
+  // Output format: "ProcessName|Window Title|left,top,right,bottom" once per 500 ms, explicitly flushed.
   // Title check handles UWP/Xbox Game Pass installs where the foreground process is
   // ApplicationFrameHost.exe rather than ForzaHorizon6.exe.
   const script = [
@@ -195,6 +195,8 @@ function startFocusWatcher() {
         if (coords.length === 4 && coords.every(n => !isNaN(n))) {
           const [l, t, r, b] = coords;
           if (r > l && b > t) {
+            // Minimized windows report (-32000,-32000,-32000,-32000); guard keeps
+            // forzaDisplay at last valid value rather than nulling it — intentional.
             forzaDisplay = screen.getDisplayMatching({ x: l, y: t, width: r - l, height: b - t });
           }
         }
