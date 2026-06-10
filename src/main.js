@@ -36,7 +36,7 @@ const THEMES = {
     'w-rpm':        { x: X + 20, y: Y + 20, visible: true  },
     'w-inputs':     { x: X + 20, y: Y + 20, visible: true  },
     'w-tires':      { x: X + 20, y: Y + 20, visible: true  },
-    'w-suspension': { x: X + 20, y: Y + 20, visible: false },
+    'w-suspension': { x: X + 20, y: Y + 20, visible: true  },
     'w-gmeter':     { x: X + 20, y: Y + 20, visible: false },
     'w-laptimes':   { x: X + 20, y: Y + 20, visible: false },
     'w-boost':      { x: X + 20, y: Y + 20, visible: false },
