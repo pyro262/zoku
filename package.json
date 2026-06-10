@@ -1,6 +1,6 @@
 {
   "name": "zoku",
-  "version": "0.2.7",
+  "version": "0.2.8",
   "description": "Zoku — Forza Horizon 6 telemetry overlay with crew session sharing",
   "main": "src/main.js",
   "scripts": {
