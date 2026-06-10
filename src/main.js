@@ -216,12 +216,24 @@ function saveConfig() {
 }
 
 function getDisplaySize() {
+  const displays = screen.getAllDisplays();
+  let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+  for (const d of displays) {
+    minX = Math.min(minX, d.bounds.x);
+    minY = Math.min(minY, d.bounds.y);
+    maxX = Math.max(maxX, d.bounds.x + d.bounds.width);
+    maxY = Math.max(maxY, d.bounds.y + d.bounds.height);
+  }
+  return { W: maxX - minX, H: maxY - minY, X: minX, Y: minY };
+}
+
+function getPrimarySize() {
   const b = screen.getPrimaryDisplay().bounds;
-  return { W: b.width, H: b.height, X: b.x, Y: b.y };
+  return { W: b.width, H: b.height };
 }
 
 function buildThemePayload(name) {
-  const { W, H } = getDisplaySize();
+  const { W, H } = getPrimarySize();
   const preset = (THEMES[name] ?? THEMES.default)(W, H);
   const saved = cfg.widgetLayouts?.[name] ?? {};
   const widgets = {};
