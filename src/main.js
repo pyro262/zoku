@@ -100,6 +100,7 @@ let focusWatcher   = null;
 let focusHideTimer = null;
 let appQuitting    = false;
 let inRace         = false;
+let forzaDisplay   = null;
 
 const UDP_VISIBILITY_TIMEOUT = 5000;
 
@@ -138,6 +139,8 @@ function startFocusWatcher() {
     '    [DllImport("user32.dll")] public static extern int GetWindowThreadProcessId(IntPtr hWnd, out int pid);',
     '    [DllImport("user32.dll", CharSet=CharSet.Unicode)]',
     '    public static extern int GetWindowText(IntPtr hWnd, StringBuilder sb, int n);',
+    '    [DllImport("user32.dll")] public static extern bool GetWindowRect(IntPtr hWnd, out RECT rect);',
+    '    [StructLayout(LayoutKind.Sequential)] public struct RECT { public int Left, Top, Right, Bottom; }',
     '}',
     '"@',
     'while ($true) {',
@@ -148,7 +151,9 @@ function startFocusWatcher() {
     '    $sb   = New-Object System.Text.StringBuilder 256',
     '    [FocusWatch]::GetWindowText($hwnd, $sb, 256) | Out-Null',
     '    $name = if ($p) { $p.ProcessName } else { "" }',
-    '    [Console]::Out.WriteLine("$name|$($sb.ToString())")',
+    '    $rect = New-Object FocusWatch+RECT',
+    '    [FocusWatch]::GetWindowRect($hwnd, [ref]$rect) | Out-Null',
+    '    [Console]::Out.WriteLine("$name|$($sb.ToString())|$($rect.Left),$($rect.Top),$($rect.Right),$($rect.Bottom)")',
     '    [Console]::Out.Flush()',
     '    Start-Sleep -Milliseconds 500',
     '}',
@@ -175,16 +180,24 @@ function startFocusWatcher() {
     const lines = buf.split('\n');
     buf = lines.pop();
     for (const line of lines) {
-      const trimmed = line.trim();
-      const sep     = trimmed.indexOf('|');
-      const procName = (sep >= 0 ? trimmed.slice(0, sep) : trimmed).toLowerCase();
-      const winTitle  = (sep >= 0 ? trimmed.slice(sep + 1) : '').toLowerCase();
+      const trimmed  = line.trim();
+      const parts    = trimmed.split('|');
+      const procName = (parts[0] ?? '').toLowerCase();
+      const winTitle = (parts[1] ?? '').toLowerCase();
+      const rectStr  = parts[2] ?? '';
       const isForzaLine = procName.includes('forza') || winTitle.includes('forza horizon');
       // Zoku's own windows (Options, Viewer) — don't disturb overlay visibility
       const isZokuLine  = procName === 'zoku' || procName.includes('electron');
       if (isForzaLine) {
         if (focusHideTimer) { clearTimeout(focusHideTimer); focusHideTimer = null; }
         if (!forzaFocused) { forzaFocused = true; syncOverlayVisibility(); }
+        const coords = rectStr.split(',').map(Number);
+        if (coords.length === 4 && coords.every(n => !isNaN(n))) {
+          const [l, t, r, b] = coords;
+          if (r > l && b > t) {
+            forzaDisplay = screen.getDisplayMatching({ x: l, y: t, width: r - l, height: b - t });
+          }
+        }
       } else if (!isZokuLine && forzaFocused && !focusHideTimer) {
         // 2 s debounce — absorbs tray navigation, brief focus loss to system dialogs
         focusHideTimer = setTimeout(() => {
