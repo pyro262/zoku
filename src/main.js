@@ -260,11 +260,9 @@ function getTargetDisplay(forThemeName) {
 
 function buildThemePayload(name) {
   const saved = cfg.widgetLayouts?.[name] ?? {};
-  const targetDisplay = getTargetDisplay(name);
-  let W = 0, H = 0, X = 0, Y = 0;
-  if (targetDisplay) {
-    ({ x: X, y: Y, width: W, height: H } = targetDisplay.bounds);
-  }
+  // getTargetDisplay returns null when a saved layout exists; fall back to primary
+  // so newly-enabled widgets (not yet in the saved layout) still spawn on-screen.
+  const { x: X, y: Y, width: W, height: H } = (getTargetDisplay(name) ?? screen.getPrimaryDisplay()).bounds;
   const preset = (THEMES[name] ?? THEMES.default)(W, H, X, Y);
   const widgets = {};
   for (const id of Object.keys(preset)) {
