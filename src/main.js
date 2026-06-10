@@ -247,10 +247,30 @@ function getPrimarySize() {
   return { W: b.width, H: b.height };
 }
 
+function getTargetDisplay(forThemeName) {
+  const hasSaved = Object.values(cfg.widgetLayouts?.[forThemeName] ?? {})
+    .some(w => typeof w.x === 'number');
+  if (hasSaved) return null;
+
+  const prevPositions = Object.values(cfg.widgetLayouts?.[activeTheme] ?? {})
+    .filter(w => typeof w.x === 'number');
+  if (prevPositions.length > 0) {
+    const cx = Math.round(prevPositions.reduce((s, p) => s + p.x, 0) / prevPositions.length);
+    const cy = Math.round(prevPositions.reduce((s, p) => s + p.y, 0) / prevPositions.length);
+    return screen.getDisplayNear(cx, cy);
+  }
+
+  return forzaDisplay ?? screen.getPrimaryDisplay();
+}
+
 function buildThemePayload(name) {
-  const { W, H } = getPrimarySize();
-  const preset = (THEMES[name] ?? THEMES.default)(W, H);
   const saved = cfg.widgetLayouts?.[name] ?? {};
+  const targetDisplay = getTargetDisplay(name);
+  let W = 0, H = 0, X = 0, Y = 0;
+  if (targetDisplay) {
+    ({ x: X, y: Y, width: W, height: H } = targetDisplay.bounds);
+  }
+  const preset = (THEMES[name] ?? THEMES.default)(W, H, X, Y);
   const widgets = {};
   for (const id of Object.keys(preset)) {
     widgets[id] = { ...preset[id], ...(saved[id] ?? {}) };
