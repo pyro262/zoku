@@ -242,11 +242,6 @@ function getDisplaySize() {
   return { W: maxX - minX, H: maxY - minY, X: minX, Y: minY };
 }
 
-function getPrimarySize() {
-  const b = screen.getPrimaryDisplay().bounds;
-  return { W: b.width, H: b.height };
-}
-
 function getTargetDisplay(forThemeName) {
   const hasSaved = Object.values(cfg.widgetLayouts?.[forThemeName] ?? {})
     .some(w => typeof w.x === 'number');
