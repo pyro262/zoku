@@ -242,12 +242,14 @@ function getDisplaySize() {
   return { W: maxX - minX, H: maxY - minY, X: minX, Y: minY };
 }
 
-function getTargetDisplay(forThemeName) {
+function getTargetDisplay(forThemeName, prevThemeName) {
   const hasSaved = Object.values(cfg.widgetLayouts?.[forThemeName] ?? {})
     .some(w => typeof w.x === 'number');
   if (hasSaved) return null;
 
-  const prevPositions = Object.values(cfg.widgetLayouts?.[activeTheme] ?? {})
+  // Use explicitly passed previous theme (before activeTheme was updated), not activeTheme
+  // which already equals forThemeName by the time this is called from sendTheme.
+  const prevPositions = Object.values(cfg.widgetLayouts?.[prevThemeName] ?? {})
     .filter(w => typeof w.x === 'number');
   if (prevPositions.length > 0) {
     const cx = Math.round(prevPositions.reduce((s, p) => s + p.x, 0) / prevPositions.length);
@@ -258,11 +260,11 @@ function getTargetDisplay(forThemeName) {
   return forzaDisplay ?? screen.getPrimaryDisplay();
 }
 
-function buildThemePayload(name) {
+function buildThemePayload(name, prevThemeName) {
   const saved = cfg.widgetLayouts?.[name] ?? {};
   // getTargetDisplay returns null when a saved layout exists; fall back to primary
   // so newly-enabled widgets (not yet in the saved layout) still spawn on-screen.
-  const { x: X, y: Y, width: W, height: H } = (getTargetDisplay(name) ?? screen.getPrimaryDisplay()).bounds;
+  const { x: X, y: Y, width: W, height: H } = (getTargetDisplay(name, prevThemeName) ?? screen.getPrimaryDisplay()).bounds;
   const preset = (THEMES[name] ?? THEMES.default)(W, H, X, Y);
   const widgets = {};
   for (const id of Object.keys(preset)) {
@@ -274,8 +276,9 @@ function buildThemePayload(name) {
 function sendTheme(name) {
   if (!overlayWin || overlayWin.isDestroyed()) return;
   const themeName = name ?? cfg.theme;
+  const prevTheme = activeTheme; // capture before updating — getTargetDisplay needs the old theme
   activeTheme = themeName;
-  overlayWin.webContents.send('theme', buildThemePayload(themeName));
+  overlayWin.webContents.send('theme', buildThemePayload(themeName, prevTheme));
 }
 
 function applyTheme(name) {
