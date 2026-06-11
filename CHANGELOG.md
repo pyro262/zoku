@@ -4,7 +4,16 @@ All notable changes to Zoku are documented here.
 
 ---
 
-## [0.2.6] — Current Release
+## [0.2.8] — Current Release
+
+### Added
+- **Multi-monitor display detection** — PS focus watcher now emits `GetWindowRect` each tick; main process tracks which display FH6 is running on as `forzaDisplay` (persists last known value; not cleared on focus loss)
+- **Smart theme preset centering** — theme presets center on FH6's display automatically. Switching to a theme with no saved layout inherits the display from the active theme's widget centroid. Falls back to primary display if FH6 has never been seen
+- **Shift+drag group move** — hold Shift while dragging any widget handle in Exterior or Interior themes to move all visible widgets together as a group. Default theme behavior unchanged
+
+---
+
+## [0.2.6]
 
 ### Added
 - **`Ctrl+Shift+F7` theme cycle hotkey** — cycles `default → exterior → interior → default`. When auto-switch is on, the switch is temporary and auto-switch resumes on the next race state change. When auto-switch is off, the switch is persistent.
