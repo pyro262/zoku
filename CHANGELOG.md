@@ -4,7 +4,14 @@ All notable changes to Zoku are documented here.
 
 ---
 
-## [0.2.8] — Current Release
+## [0.2.9] — Current Release
+
+### Fixed
+- **Wrong monitor on theme switch** — `activeTheme` was updated before `buildThemePayload` was called, so `getTargetDisplay` always compared the new theme against itself (finding no previous positions) and fell through to `forzaDisplay` — placing widgets on FH6's display instead of the previous theme's display. Fixed by capturing the previous theme name before the update and passing it explicitly.
+
+---
+
+## [0.2.8]
 
 ### Added
 - **Multi-monitor display detection** — PS focus watcher now emits `GetWindowRect` each tick; main process tracks which display FH6 is running on as `forzaDisplay` (persists last known value; not cleared on focus loss)
