@@ -252,8 +252,10 @@ function getTargetDisplay(forThemeName, prevThemeName) {
   const prevPositions = Object.values(cfg.widgetLayouts?.[prevThemeName] ?? {})
     .filter(w => typeof w.x === 'number');
   if (prevPositions.length > 0) {
-    const cx = Math.round(prevPositions.reduce((s, p) => s + p.x, 0) / prevPositions.length);
-    const cy = Math.round(prevPositions.reduce((s, p) => s + p.y, 0) / prevPositions.length);
+    // Saved positions are window-relative; getDisplayNear needs virtual desktop coords.
+    const { X: winX, Y: winY } = getDisplaySize();
+    const cx = Math.round(prevPositions.reduce((s, p) => s + p.x, 0) / prevPositions.length) + winX;
+    const cy = Math.round(prevPositions.reduce((s, p) => s + p.y, 0) / prevPositions.length) + winY;
     return screen.getDisplayNear(cx, cy);
   }
 
@@ -264,7 +266,12 @@ function buildThemePayload(name, prevThemeName) {
   const saved = cfg.widgetLayouts?.[name] ?? {};
   // getTargetDisplay returns null when a saved layout exists; fall back to primary
   // so newly-enabled widgets (not yet in the saved layout) still spawn on-screen.
-  const { x: X, y: Y, width: W, height: H } = (getTargetDisplay(name, prevThemeName) ?? screen.getPrimaryDisplay()).bounds;
+  const targetDisplay = getTargetDisplay(name, prevThemeName) ?? screen.getPrimaryDisplay();
+  const { X: winX, Y: winY } = getDisplaySize();
+  const { x: dx, y: dy, width: W, height: H } = targetDisplay.bounds;
+  // Presets use window-relative coords; display.bounds are virtual-desktop-absolute.
+  const X = dx - winX;
+  const Y = dy - winY;
   const preset = (THEMES[name] ?? THEMES.default)(W, H, X, Y);
   const widgets = {};
   for (const id of Object.keys(preset)) {

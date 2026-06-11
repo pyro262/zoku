@@ -4,7 +4,17 @@ All notable changes to Zoku are documented here.
 
 ---
 
-## [0.2.9] — Current Release
+## [0.3.0] — Current Release
+
+### Fixed
+- **Widgets appear on wrong monitor** — preset positions were computed in virtual-desktop-absolute coordinates but the renderer expects window-relative coordinates. The overlay window origin (virtual desktop minimum x/y across all displays) was not subtracted before passing display bounds to THEMES functions, causing an incorrect offset whenever any monitor has a non-zero virtual-desktop origin. All two-monitor setups where the primary is not the leftmost display were affected.
+- **Centroid display detection used wrong coordinate space** — when switching to a theme with no saved layout, the previous theme's widget centroid was passed to `screen.getDisplayNear` in window-relative coordinates instead of virtual-desktop-absolute coordinates, causing the wrong target display to be selected.
+
+> **If you're upgrading from v0.2.8 or v0.2.9:** your saved widget positions for any theme that was set by a buggy preset may point to the wrong monitor. Reset affected themes by deleting their key from `%APPDATA%\Zoku\config.json` (while Zoku is not running), then restart — presets will recalculate correctly.
+
+---
+
+## [0.2.9]
 
 ### Fixed
 - **Wrong monitor on theme switch** — `activeTheme` was updated before `buildThemePayload` was called, so `getTargetDisplay` always compared the new theme against itself (finding no previous positions) and fell through to `forzaDisplay` — placing widgets on FH6's display instead of the previous theme's display. Fixed by capturing the previous theme name before the update and passing it explicitly.
