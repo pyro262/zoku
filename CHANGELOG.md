@@ -4,7 +4,14 @@ All notable changes to Zoku are documented here.
 
 ---
 
-## [0.3.0] — Current Release
+## [0.3.1] — Current Release
+
+### Fixed
+- **Overlay window clamped to one monitor** — Windows clamps a `BrowserWindow`'s creation-time size to the bounds of the monitor it spawns on ([electron#20351](https://github.com/electron/electron/issues/20351)). On multi-monitor setups the overlay window was anchored at the virtual-desktop origin (top-left monitor) but sized to roughly one monitor, so it only partially covered the other displays — widgets could not be dragged onto them and presets landed off-window. The union bounds are now re-applied with `setBounds()` after creation, verified via `getBounds()` and retried up to 3× (mixed-DPI conversion can need a second pass, [electron#29605](https://github.com/electron/electron/issues/29605)), with `resizable` temporarily toggled on so the window can also shrink when a display is removed ([electron#15560](https://github.com/electron/electron/issues/15560)).
+
+---
+
+## [0.3.0]
 
 ### Fixed
 - **Widgets appear on wrong monitor** — preset positions were computed in virtual-desktop-absolute coordinates but the renderer expects window-relative coordinates. The overlay window origin (virtual desktop minimum x/y across all displays) was not subtracted before passing display bounds to THEMES functions, causing an incorrect offset whenever any monitor has a non-zero virtual-desktop origin. All two-monitor setups where the primary is not the leftmost display were affected.

@@ -242,6 +242,23 @@ function getDisplaySize() {
   return { W: maxX - minX, H: maxY - minY, X: minX, Y: minY };
 }
 
+function setOverlayBounds() {
+  if (!overlayWin || overlayWin.isDestroyed()) return;
+  const { W, H, X, Y } = getDisplaySize();
+  // Windows clamps creation-time size to the spawn monitor's bounds (electron#20351),
+  // and setBounds converts size using the window's pre-move scale factor on
+  // mixed-DPI setups (electron#29605) — so apply after creation and re-apply
+  // until getBounds reports the requested rect. resizable must be toggled on:
+  // setBounds cannot shrink a non-resizable window (electron#15560).
+  overlayWin.setResizable(true);
+  for (let i = 0; i < 3; i++) {
+    overlayWin.setBounds({ x: X, y: Y, width: W, height: H });
+    const b = overlayWin.getBounds();
+    if (b.x === X && b.y === Y && b.width === W && b.height === H) break;
+  }
+  overlayWin.setResizable(false);
+}
+
 function getTargetDisplay(forThemeName, prevThemeName) {
   const hasSaved = Object.values(cfg.widgetLayouts?.[forThemeName] ?? {})
     .some(w => typeof w.x === 'number');
@@ -378,6 +395,7 @@ function createOverlay() {
   });
 
   overlayWin.loadFile(path.join(__dirname, 'overlay', 'index.html'));
+  setOverlayBounds(); // creation-time size is clamped to the spawn monitor — re-apply union
   overlayWin.setIgnoreMouseEvents(true, { forward: true });
   overlayWin.setAlwaysOnTop(true, 'screen-saver');
 
@@ -708,8 +726,8 @@ app.whenReady().then(() => {
 
   screen.on('display-metrics-changed', () => {
     if (!overlayWin || overlayWin.isDestroyed()) return;
-    const { W, H, X, Y } = getDisplaySize();
-    overlayWin.setBounds({ x: X, y: Y, width: W, height: H });
+    setOverlayBounds();
+    const { W, H } = getDisplaySize();
     overlayWin.webContents.send('displaySize', { W, H });
   });
 

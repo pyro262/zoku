@@ -6,7 +6,7 @@
 <p align="center">Real-time telemetry overlay for Forza Horizon 6</p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/version-0.3.0-9b59b6?style=flat-square" alt="version">
+  <img src="https://img.shields.io/badge/version-0.3.1-9b59b6?style=flat-square" alt="version">
   <img src="https://img.shields.io/badge/platform-Windows-00d4ff?style=flat-square" alt="platform">
   <img src="https://img.shields.io/badge/built%20with-Electron-2ecc71?style=flat-square" alt="electron">
   <img src="https://img.shields.io/badge/game-Forza%20Horizon%206-f39c12?style=flat-square" alt="game">
