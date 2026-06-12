@@ -168,7 +168,7 @@ npm run build    # packages NSIS installer → dist/
 
 ## Troubleshooting
 
-See [FAQ](docs/faq.md) for common issues and solutions.
+See [FAQ](docs/faq.md) for common issues and solutions, the [wiki](https://github.com/pyro262/zoku/wiki) for full documentation, and [Known Issues](https://github.com/pyro262/zoku/wiki/Known-Issues) for current limitations. Found a bug? [Open an issue](https://github.com/pyro262/zoku/issues/new/choose).
 
 ## Changelog
 

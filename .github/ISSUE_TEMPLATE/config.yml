@@ -1,0 +1,8 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Troubleshooting guide
+    url: https://github.com/pyro262/zoku/wiki/Troubleshooting
+    about: Common problems and fixes — check here first
+  - name: Known issues
+    url: https://github.com/pyro262/zoku/wiki/Known-Issues
+    about: Current limitations and open problems

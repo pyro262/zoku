@@ -1,0 +1,43 @@
+name: Bug report
+description: Something broken or behaving wrong
+labels: [bug]
+body:
+  - type: input
+    id: version
+    attributes:
+      label: Zoku version
+      description: Shown in the tray right-click menu and Options window footer
+      placeholder: v0.3.1
+    validations:
+      required: true
+  - type: dropdown
+    id: install
+    attributes:
+      label: FH6 install type
+      options:
+        - Steam
+        - Xbox app / Microsoft Store (UWP)
+        - Not sure
+    validations:
+      required: true
+  - type: input
+    id: monitors
+    attributes:
+      label: Monitor setup
+      description: "How many monitors, their resolutions, arrangement, and Windows scale % for each (Settings → Display → Scale). Critical for overlay positioning bugs."
+      placeholder: "4 monitors, all 2560x1440 @ 100%, 2x2 grid, game on bottom-right (primary)"
+    validations:
+      required: true
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened
+      description: What you saw, and what you expected instead. Steps to reproduce if you have them.
+    validations:
+      required: true
+  - type: textarea
+    id: config
+    attributes:
+      label: config.json (optional)
+      description: "Paste `%APPDATA%\\Zoku\\config.json` for layout/positioning bugs"
+      render: json
