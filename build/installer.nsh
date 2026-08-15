@@ -16,6 +16,28 @@
   MessageBox MB_YESNO|MB_ICONQUESTION "Open the full README for setup instructions?" IDNO skip_readme
     ExecShell "open" "$INSTDIR\README.txt"
   skip_readme:
+
+  ; electron-builder writes the uninstaller to $INSTDIR and registers it in
+  ; Apps & features, but never makes a Start Menu entry for it. Add one next to
+  ; the app shortcut (menuCategory "Zoku" => $SMPROGRAMS\Zoku\).
+  CreateDirectory "$SMPROGRAMS\Zoku"
+  CreateShortCut "$SMPROGRAMS\Zoku\Uninstall Zoku.lnk" "$INSTDIR\${UNINSTALL_FILENAME}"
+!macroend
+
+; Uninstall runs while Zoku sits in the tray -> locked files, partial removal.
+; Kill it first, same as customInit does on install.
+!macro customUnInit
+  nsExec::ExecToLog `taskkill /F /IM "Zoku.exe" /T`
+  Pop $0
+  IntCmp $0 0 wait_close_un skip_wait_un skip_wait_un
+  wait_close_un:
+    Sleep 1500
+  skip_wait_un:
+!macroend
+
+!macro customUnInstall
+  Delete "$SMPROGRAMS\Zoku\Uninstall Zoku.lnk"
+  RMDir "$SMPROGRAMS\Zoku"
 !macroend
 
 !macro customHeader

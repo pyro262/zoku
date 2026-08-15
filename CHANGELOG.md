@@ -4,7 +4,18 @@ All notable changes to Zoku are documented here.
 
 ---
 
-## [0.3.1] — Current Release
+## [0.3.2] — Current Release
+
+### Fixed
+- **Overlay never appears / stays hidden after alt+tab** — the PowerShell focus watcher stored the foreground window's process ID in `$pid`, which is a **read-only PowerShell automatic variable** holding PowerShell's own PID. Writing to it through `[ref]$pid` threw, so `$p.ProcessName` was always `powershell` and the process-name half of the Forza check could never match. Only the window-title fallback (`forza horizon`) ever succeeded — any install whose title didn't match saw the overlay hide after the 2 s debounce and never come back, including after alt+tabbing back into the game. Renamed to `$procId`.
+
+### Changed
+- **Start Menu uninstall shortcut** — electron-builder registers the uninstaller in Apps & features but never creates a Start Menu entry for it. Shortcuts now live in a `Zoku` Start Menu folder containing both `Zoku` and `Uninstall Zoku`.
+- **Uninstall while running** — the uninstaller now terminates `Zoku.exe` before removing files, so uninstalling with the tray app open no longer leaves files behind.
+
+---
+
+## [0.3.1]
 
 ### Fixed
 - **Overlay window clamped to one monitor** — Windows clamps a `BrowserWindow`'s creation-time size to the bounds of the monitor it spawns on ([electron#20351](https://github.com/electron/electron/issues/20351)). On multi-monitor setups the overlay window was anchored at the virtual-desktop origin (top-left monitor) but sized to roughly one monitor, so it only partially covered the other displays — widgets could not be dragged onto them and presets landed off-window. The union bounds are now re-applied with `setBounds()` after creation, verified via `getBounds()` and retried up to 3× (mixed-DPI conversion can need a second pass, [electron#29605](https://github.com/electron/electron/issues/29605)), with `resizable` temporarily toggled on so the window can also shrink when a display is removed ([electron#15560](https://github.com/electron/electron/issues/15560)).

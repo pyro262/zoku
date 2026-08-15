@@ -1,6 +1,6 @@
 {
   "name": "zoku",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "description": "Zoku — Forza Horizon 6 telemetry overlay with crew session sharing",
   "main": "src/main.js",
   "scripts": {
@@ -35,6 +35,7 @@
       "allowToChangeInstallationDirectory": true,
       "createDesktopShortcut": true,
       "createStartMenuShortcut": true,
+      "menuCategory": "Zoku",
       "deleteAppDataOnUninstall": false,
       "differentialPackage": false,
       "include": "build/installer.nsh"

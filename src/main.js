@@ -145,9 +145,13 @@ function startFocusWatcher() {
     '"@',
     'while ($true) {',
     '    $hwnd = [FocusWatch]::GetForegroundWindow()',
-    '    $pid  = 0',
-    '    [FocusWatch]::GetWindowThreadProcessId($hwnd, [ref]$pid) | Out-Null',
-    '    $p    = Get-Process -Id $pid -ErrorAction SilentlyContinue',
+    // NOTE: must NOT be named $pid — that is a read-only PowerShell automatic
+    // variable (this process's own PID). Writing to it via [ref] throws, leaving
+    // $pid as the PowerShell PID, so ProcessName was always "powershell" and the
+    // process-name half of the Forza check never matched.
+    '    $procId = 0',
+    '    [FocusWatch]::GetWindowThreadProcessId($hwnd, [ref]$procId) | Out-Null',
+    '    $p    = Get-Process -Id $procId -ErrorAction SilentlyContinue',
     '    $sb   = New-Object System.Text.StringBuilder 256',
     '    [FocusWatch]::GetWindowText($hwnd, $sb, 256) | Out-Null',
     '    $name = if ($p) { $p.ProcessName } else { "" }',
